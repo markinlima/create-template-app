@@ -1,0 +1,27 @@
+{
+	"openapi": "3.0.3",
+	"info": { "title": "Template API", "version": "1.0.0" },
+	"paths": {
+		"/health": {
+			"get": {
+				"operationId": "getHealth",
+				"summary": "Health check (placeholder). Replace this file with `bun run script:generate-openapi`.",
+				"tags": ["Health"],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": { "status": { "type": "string" } },
+									"required": ["status"]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

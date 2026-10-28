@@ -1,0 +1,12 @@
+@utility scroll-hidden {
+  @apply [&::-webkit-scrollbar]:hidden;
+}
+
+@utility scroll-visible {
+  @apply [&::-webkit-scrollbar]:block;
+}
+
+/* Shared Tailwind class lists live here as `@utility` blocks (see .agents/rules/web/react/styling.md). */
+@utility page-container {
+  @apply mx-auto flex w-full max-w-4xl flex-col gap-6 p-4;
+}

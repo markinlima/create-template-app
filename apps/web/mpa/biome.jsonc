@@ -1,0 +1,51 @@
+{
+	"$schema": "../../node_modules/@biomejs/biome/configuration_schema.json",
+	"root": false,
+	"extends": "//",
+	"files": {
+		"includes": [
+			"!**/*.generated.*", // ? Generated files are not meant to be edited by hand, so we ignore them.
+			"!build"
+		]
+	},
+	"formatter": {
+		"indentStyle": "tab",
+		"lineWidth": 140
+	},
+	"linter": {
+		"domains": {
+			"playwright": "all",
+			"react": "all",
+			"tailwind": "all"
+		},
+		"rules": {
+			"performance": {
+				"noJsxPropsBind": "off" // ! Disabled temporarily.
+			},
+			"suspicious": {
+				"noArrayIndexKey": "off"
+			},
+			"a11y": {
+				// ? Biome treats `Field.label` as a native <label>, but it is associated with its input through `htmlFor` internally.
+				"noLabelWithoutControl": "off"
+			},
+			"correctness": {
+				// ? Used in tasntack form library
+				"noChildrenProp": "off",
+				"useImportExtensions": "off",
+				"noUnresolvedImports": "error", // ? Used by biome to check for unresolved imports
+				// ? Used by biome to remove unused imports
+				"noUnusedImports": {
+					"fix": "safe",
+					"level": "error"
+				}
+			},
+			"style": {
+				"useBlockStatements": {
+					"fix": "safe",
+					"level": "error"
+				} // ? Change the fix level to safe, to force biome to auto fix in code.
+			}
+		}
+	}
+}

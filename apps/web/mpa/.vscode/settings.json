@@ -1,0 +1,19 @@
+{
+	"editor.rulers": [140],
+	"files.exclude": {
+		".tanstack": true
+	},
+	"github.copilot.chat.commitMessageGeneration.instructions": [
+		{
+			"file": "../../../.agents/rules/generic/commits.md"
+		}
+	],
+	// ? Explorer
+	"explorer.fileNesting.enabled": true, // ? using this vscode feature to better organization and navigation in the file explorer.
+	"explorer.fileNesting.patterns": {
+		"package.json": "*.config.ts, biome.*, tsconfig.json",
+		"docker-compose.yml": "dockerfile*, Dockerfile*, docker-compose.*, .dockerignore*, compose.*",
+		".env": ".env*",
+		"README.md": "*.mdx, *.markdown, *.md"
+	}
+}

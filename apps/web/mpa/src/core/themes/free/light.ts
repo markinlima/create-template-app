@@ -1,0 +1,51 @@
+import { defineTheme } from "@web/theme";
+
+import { themeLevels } from "@/core/themes/levels";
+
+export const lightTheme = defineTheme({
+	name: "lightDefault",
+	displayName: "Claro",
+	level: themeLevels.free,
+	scheme: "light",
+	// ? A warm cream, the light version of the warm brown of the dark themes: no pure white, and the cards a little lighter than the
+	// ? page so there is depth. Every neutral shares the hue of the primary (gold), only with little saturation.
+	colors: {
+		destructive: "hsl(8 68% 46%)",
+		"destructive-shadow": "oklch(from var(--destructive) 0.8 c h)",
+		"destructive-foreground": "hsl(40 45% 98%)",
+		success: "hsl(142 55% 36%)",
+		"success-shadow": "oklch(from var(--success) 0.8 c h)",
+		warn: "hsl(32 90% 48%)",
+		"warn-shadow": "oklch(from var(--warn) 0.8 c h)",
+		info: "hsl(205 75% 42%)",
+		"info-shadow": "oklch(from var(--info) 0.8 c h)",
+		background: "hsl(40 32% 93%)",
+		foreground: "hsl(24 22% 12%)",
+		card: "hsl(40 40% 96.5%)",
+		"card-foreground": "hsl(24 22% 12%)",
+		popover: "hsl(40 40% 96.5%)",
+		"popover-foreground": "hsl(24 22% 12%)",
+		primary: "hsl(40 94% 42%)",
+		"primary-foreground": "hsl(26 83% 10%)",
+		"primary-shadow": "oklch(from var(--primary) 0.8 c h)",
+		secondary: "hsl(28 92% 42%)",
+		"secondary-foreground": "hsl(40 45% 98%)",
+		"secondary-shadow": "oklch(from var(--secondary) 0.8 c h)",
+		muted: "hsl(38 24% 88%)",
+		"muted-foreground": "hsl(26 14% 36%)",
+		accent: "hsl(38 28% 87%)",
+		"accent-foreground": "hsl(24 22% 12%)",
+		"accent-shadow": "oklch(from var(--accent) 0.8 c h)",
+		border: "hsl(38 20% 82%)",
+		input: "hsl(38 20% 80%)",
+		ring: "hsl(40 90% 36%)",
+		sidebar: "hsl(40 40% 96.5%)",
+		"sidebar-foreground": "hsl(24 22% 12%)",
+		"sidebar-primary": "hsl(40 94% 42%)",
+		"sidebar-primary-foreground": "hsl(26 83% 10%)",
+		"sidebar-accent": "hsl(38 28% 87%)",
+		"sidebar-accent-foreground": "hsl(24 22% 12%)",
+		"sidebar-border": "hsl(38 20% 82%)",
+		"sidebar-ring": "hsl(40 90% 36%)",
+	},
+});

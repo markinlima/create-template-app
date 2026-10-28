@@ -1,0 +1,73 @@
+@theme {
+  --animate-accordion-down: accordion-down 200ms ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  --animate-accordion-up: accordion-up 200ms ease-out;
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
+  }
+  --animate-slide-in-loop: slide-in-loop 3s ease-out infinite;
+
+  @keyframes slide-in-loop {
+    from {
+      transform: translateX(-30%);
+    }
+
+    to {
+      transform: translateX(120%);
+    }
+  }
+  --animate-floating-phone: floating-phone 4s ease-in-out infinite;
+
+  @keyframes floating-phone {
+    0% {
+      transform: translateZ(8px) translateY(-2px);
+    }
+
+    50% {
+      transform: translateZ(32px) translateY(-8px);
+    }
+
+    100% {
+      transform: translateZ(8px) translateY(-2px);
+    }
+  }
+
+  --animate-fade-in: fade-in 300ms ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+  --animate-fade-out: fade-out 300ms ease-out;
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+}

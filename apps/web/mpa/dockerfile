@@ -1,0 +1,61 @@
+ARG BUN_VERSION=1.4.3
+ARG TURBO_VERSION=2.10.9
+
+FROM oven/bun:${BUN_VERSION}-alpine AS base
+
+WORKDIR /home/bun/app
+
+FROM base AS prepare
+ARG TURBO_VERSION
+RUN bun i -g turbo@${TURBO_VERSION}
+COPY . .
+
+RUN turbo prune web-mpa --docker
+
+FROM base AS build
+
+COPY --from=prepare /home/bun/app/out/json/ .
+
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun i --frozen-lockfile --production
+
+COPY --from=prepare /home/bun/app/out/full/ .
+
+WORKDIR /home/bun/app/templates/web/mpa
+
+RUN bun run build:prepare
+
+ENV NODE_ENV=production
+
+RUN --mount=type=secret,id=build-env,target=/home/bun/app/templates/web/mpa/.env,required=true \
+    bun run build
+
+FROM base AS test
+
+ENV TEST_TARGET="test:all"
+
+COPY --from=prepare /home/bun/app/out/json/ .
+RUN bun i --frozen-lockfile
+COPY --from=prepare /home/bun/app/out/full/ .
+
+USER bun
+WORKDIR /home/bun/app/templates/web/mpa
+
+CMD bun run ${TEST_TARGET}
+
+
+FROM oven/bun:${BUN_VERSION}-distroless AS production
+
+WORKDIR /home/bun/app
+
+ENV NODE_ENV=production \
+    HOST=0.0.0.0 \
+    PORT=5173
+
+COPY --from=build /home/bun/app/templates/web/mpa/build/frontend .
+
+USER nonroot
+EXPOSE 5173
+
+CMD ["run", "./server/index.mjs"]
+HEALTHCHECK --interval=10s --timeout=30s --start-period=20s --retries=3 CMD ["bun", "-e", "fetch('http://0.0.0.0:5173').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]

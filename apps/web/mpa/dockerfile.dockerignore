@@ -1,0 +1,42 @@
+# ? Env files (build-time envs are passed as a BuildKit secret, never through the context)
+**/.env*
+**/*.local
+
+# ? Docker related files
+**/.dockerignore
+**/dockerfile
+**/dockerfile.dockerignore
+**/docker-compose*.yml
+
+# ? Artefacts (regenerated inside the build)
+**/node_modules
+**/build
+**/dist
+**/out
+**/.turbo
+**/.tanstack
+**/.unlighthouse
+**/*generated*
+templates/web/mpa/src/gen
+**/*.tsbuildinfo
+
+# ? VCS, CI and IDE
+**/.git
+**/.github
+**/.devcontainer
+**/.vscode
+**/.zed
+**/.idea
+**/.DS_Store
+
+# ? docs
+**/README.md
+**/*.mdx
+**/*.stories.*
+
+# ? logs and reports
+**/logs
+**/*.log
+
+# ? Models
+**/*.onnx
