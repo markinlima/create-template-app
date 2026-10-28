@@ -1,0 +1,40 @@
+ARG BUN_VERSION=1.4.3
+ARG TURBO_VERSION=2.10.9
+ARG NGINX_VERSION=1.29-alpine
+
+FROM oven/bun:${BUN_VERSION}-alpine AS base
+
+WORKDIR /home/bun/app
+
+FROM base AS prepare
+ARG TURBO_VERSION
+RUN bun i -g turbo@${TURBO_VERSION}
+COPY . .
+
+RUN turbo prune web-spa --docker
+
+FROM base AS build
+
+COPY --from=prepare /home/bun/app/out/json/ .
+
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun i --frozen-lockfile
+
+COPY --from=prepare /home/bun/app/out/full/ .
+
+WORKDIR /home/bun/app/templates/web/spa
+
+RUN bun run build:prepare
+
+ENV NODE_ENV=production
+
+# ? Build-time envs (VITE_*) are inlined in the bundle, so they are passed to the build as a secret.
+RUN --mount=type=secret,id=build-env,target=/home/bun/app/templates/web/spa/.env,required=true \
+    bun run build
+
+FROM nginx:${NGINX_VERSION} AS production
+
+COPY --from=build /home/bun/app/templates/web/spa/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /home/bun/app/templates/web/spa/dist /usr/share/nginx/html
+
+EXPOSE 80
