@@ -1,0 +1,32 @@
+name: dev
+
+networks:
+  development-net:
+    external: true
+
+services:
+  app:
+    privileged: true
+    build:
+      context: ../
+      dockerfile: .devcontainer/dockerfile
+      pull: true
+    volumes:
+      # ? Mount the entire project to allow for live code changes
+      - ../:/home/vscode/app:cached
+      # ? Mount the Docker socket to allow the backend to manage Docker containers if needed
+      - /var/run/docker.sock:/var/run/docker.sock
+      # ? Mount the USB bus to allow the adb to access USB devices if needed
+      - /dev/bus/usb:/dev/bus/usb
+      # ? sync the claude config from the host to the container
+      - ~/.claude:/home/vscode/.claude
+
+      # ? sync the zshrc config from the host to the container
+      - ~/.zshrc:/home/vscode/.zshrc:ro
+      - ~/.oh-my-zsh/custom:/home/vscode/.oh-my-zsh/custom:ro
+      - ~/.zsh_history:/home/vscode/.zsh_history:cached
+    environment:
+      CLAUDE_CONFIG_DIR: /home/vscode/.claude
+      PHASE_HOST: https://phase.example.com/ # FIXME: your Phase host
+    networks:
+      - development-net

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Blocks direct pushes to this repo's trunk branches (main, staging, dev).
+#
+# GitHub branch protection rules require GitHub Pro on private repos, so
+# this is the free, local stand-in: it only stops a push from *this* clone
+# once `git config core.hooksPath .githooks` is set (done automatically by
+# the devcontainer's postCreateCommand). It is not server-side enforcement
+# — `git push --no-verify` still bypasses it, same as any other git hook.
+#
+# See .claude/rules/generic/branch-workflow.md: every change to a trunk
+# branch must land through a pull request, never a direct push.
+set -euo pipefail
+
+protected_branches=("main" "staging" "dev")
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  branch="${remote_ref#refs/heads/}"
+  for protected in "${protected_branches[@]}"; do
+    if [ "$branch" = "$protected" ]; then
+      echo "error: direct push to '$protected' is blocked by .githooks/pre-push" >&2
+      echo "" >&2
+      echo "This repo requires every change to $protected to land through a" >&2
+      echo "pull request (see .claude/rules/generic/branch-workflow.md)." >&2
+      echo "Push your work to a feature branch instead and open a PR — the" >&2
+      echo "open-pr skill (.claude/skills/open-pr) does this for you." >&2
+      exit 1
+    fi
+  done
+done
+
+exit 0

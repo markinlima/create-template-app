@@ -1,0 +1,6 @@
+{
+  "id": "ffmpeg",
+  "version": "1.0.0",
+  "name": "ffmpeg",
+  "description": "Installs ffmpeg via apt, relying on APT's signed repository metadata to verify package integrity."
+}

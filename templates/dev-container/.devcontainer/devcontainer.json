@@ -1,0 +1,119 @@
+{
+  "name": "app-dev",
+  "dockerComposeFile": "./docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/home/vscode/app",
+  "updateRemoteUserUID": true,
+  "initializeCommand": "bash .devcontainer/hooks/initialize.sh",
+  "postCreateCommand": "bash .devcontainer/hooks/post-create.sh",
+  "postAttachCommand": "bash .devcontainer/hooks/post-attach.sh",
+  "forwardPorts": [4983],
+  "portsAttributes": {
+    "4983": {
+      "label": "Drizzle Studio",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "web:5173": {
+      "label": "Web - docker",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "5173": {
+      "label": "Web - dev",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "web:5174": {
+      "label": "Web - preview",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "backend:3333": {
+      "label": "Backend - docker",
+      "onAutoForward": "notify"
+    },
+    "3333": {
+      "label": "Backend - dev",
+      "onAutoForward": "notify"
+    },
+    "rabbitmq:15672": {
+      "label": "RabbitMQ Management",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "postgres:5432": {
+      "label": "Postgres",
+      "onAutoForward": "notify"
+    },
+    "s3mock:9090": {
+      "label": "S3 Mock",
+      "onAutoForward": "notify"
+    },
+    "5037": {
+      "label": "ADB Server",
+      "onAutoForward": "notify"
+    },
+    "redis:6379": {
+      "label": "Redis",
+      "onAutoForward": "notify"
+    }
+  },
+  "otherPortsAttributes": {
+    "label": "Unknown Port",
+    "onAutoForward": "notify"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2.7.1": {
+      "upgradePackages": false,
+      "username": "vscode",
+      "configureZshAsDefaultShell": true
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1.10.1": {
+      "moby": false
+    },
+    // warn: all project uses bun has default code runner, package manager, etc. but mobile projects and claude-code still require nodejs to run, so we install nvm to manage nodejs versions
+    "ghcr.io/devcontainers/features/node:2.1.1": {
+      "version": "24"
+    },
+    // ? Mobile only (Android build): enable together.
+    // "ghcr.io/devcontainers/features/java:1.8.3": {
+    //   "version": "17"
+    // },
+    // "./features/install-android-sdk": {
+    //   "platformsVersion": "36",
+    //   "buildToolsVersion": "36.0.0"
+    // },
+    "./features/bun": {
+      "version": "1.4.3",
+      "username": "vscode"
+    },
+    // "./features/ffmpeg": {},
+    "./features/trivy": {
+      "version": "0.74.0"
+    },
+    "./features/phase": {
+      "version": "2.3.2"
+    },
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+  // ? Bump containerVersion every time `dockerfile` or `docker-compose.yml` changes,
+  // ? so VS Code detects the config drift and prompts to rebuild the container.
+  "containerEnv": {
+    "containerVersion": "5"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome", // ? biome
+        "aaron-bond.better-comments", // ? better comments
+        "github.vscode-github-actions", // ? github actions
+        "ms-azuretools.vscode-containers", // ? containers
+        "docker.docker", // ? docker dx
+        "christian-kohler.path-intellisense", // ? path intellisense
+        "ms-vscode-remote.remote-containers", // ? dev container
+        "AquaSecurityOfficial.trivy-vulnerability-scanner", // ? trivy scanner
+        "oven.bun-vscode", // ? bun
+        "TypeScriptTeam.native-preview", // ? native preview
+        "Cardinal90.multi-cursor-case-preserve", // ? multi cursor case preserve
+        "tamasfe.even-better-toml", // ? even better toml (for bunfig.toml)
+        "github.vscode-github-actions" // ? github actions
+      ]
+    }
+  }
+}
