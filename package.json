@@ -1,12 +1,44 @@
 {
   "name": "create-template-app",
-  "module": "index.ts",
+  "packageManager": "bun@1.4.0",
   "type": "module",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
+  "scripts": {
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "build:prepare": "turbo run build:prepare",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
+    "ts:check": "turbo run ts:check",
+    "typecheck": "bun run ts:check"
   },
-  "peerDependencies": {
-    "typescript": "^7"
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@types/bun": "catalog:",
+    "turbo": "^2.11.7",
+    "typescript": "catalog:"
+  },
+  "workspaces": {
+    "packages": [
+      "apps/*/*",
+      "packages/*/*"
+    ],
+    "catalog": {
+      "@kubb/cli": "^4.39.3",
+      "@kubb/core": "^4.39.3",
+      "@kubb/plugin-client": "^4.39.3",
+      "@kubb/plugin-oas": "^4.39.3",
+      "@kubb/plugin-react-query": "^4.39.3",
+      "@kubb/plugin-ts": "^4.39.3",
+      "@types/bun": "1.4.2",
+      "dayjs": "^1.11.23",
+      "typescript": "^7.0.2",
+      "zod": "^4.6.5"
+    },
+    "catalogs": {
+      "tailwindv4": {
+        "tailwindcss": "^4.3.3"
+      }
+    }
   }
 }

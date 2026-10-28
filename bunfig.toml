@@ -1,0 +1,20 @@
+smol = false
+loglevel = "debug"
+# preload = []
+
+[install]
+auto = "fallback"
+# publicHoistPattern = []
+# hoistPattern = []
+logLevel = "debug"
+linker = "isolated"
+
+[console]
+depth = 4
+
+[test]
+onlyFailures = false
+
+[run]
+bun = true
+shell = "bun"
