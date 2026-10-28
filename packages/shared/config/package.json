@@ -1,0 +1,15 @@
+{
+  "name": "@shared/config",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "catalog:"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  },
+  "exports": {
+    "./typescript/*": "./typescript/*"
+  }
+}

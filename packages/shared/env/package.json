@@ -1,0 +1,23 @@
+{
+  "name": "@shared/env",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "--- LINT ---": "",
+    "lint": "bun run ts:check && biome check",
+    "ts:check": "tsc --noEmit",
+    "lint:fix": "biome check --write"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@shared/config": "workspace:*",
+    "@shared/utils": "workspace:*",
+    "zod": "catalog:"
+  },
+  "exports": {
+    "./*": "./src/*/index.ts"
+  }
+}
