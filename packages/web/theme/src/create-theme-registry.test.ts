@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 
 import { createThemeRegistry } from "./create-theme-registry";
-import { defineTheme } from "./define-theme";
-import type { ThemeColors } from "./types";
+import type { ThemeColors } from "./types/theme";
+import { defineTheme } from "./utils/define-theme";
 
 const colors = new Proxy({}, { get: () => "red" }) as ThemeColors;
 

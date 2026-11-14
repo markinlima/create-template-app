@@ -1,3 +1,4 @@
-import { SimpleLoaderIconRoot } from "./simple-loader-root";
+import { SimpleLoaderIconRoot } from "./components/simple-loader-root";
 
+/** A spinning loader icon. */
 export const SimpleLoaderIcon = Object.assign(SimpleLoaderIconRoot, {});

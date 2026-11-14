@@ -1,0 +1,25 @@
+name: web-prod
+
+networks:
+  development-net:
+    external: true
+
+secrets:
+  build-env:
+    file: ./.env
+
+services:
+  web:
+    env_file:
+      - .env
+    profiles:
+      - web
+    build:
+      context: ../../
+      dockerfile: ./apps/web/dockerfile
+      target: production
+      pull: true
+      secrets:
+        - build-env
+    networks:
+      - development-net

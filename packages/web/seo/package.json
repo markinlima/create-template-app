@@ -1,0 +1,29 @@
+{
+  "name": "@web/seo",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.4",
+  "scripts": {
+    "--- LINTING ---": "",
+    "lint": "bun run ts:check && biome check",
+    "ts:check": "bun check",
+    "lint:fix": "biome check --write",
+    "--- TESTING ---": "",
+    "test:unit": "bun test",
+    "test": "bun run test:unit"
+  },
+  "dependencies": {
+    "vite": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@types/estree": "^1.0.8",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./head": "./src/head/index.ts",
+    "./vite": "./src/vite/index.ts"
+  }
+}

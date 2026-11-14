@@ -11,8 +11,9 @@ export function formatEnvVariables(
     throw new Error("Input must be a object");
   }
 
-  const emptyStringsToUndefinedObj = emptyStringsToUndefined(obj);
-  const sanitizedTrimObj = trimStrings(emptyStringsToUndefinedObj);
-  const stringsToBooleanObj = stringsToBoolean(sanitizedTrimObj);
+  // trim first so whitespace-only values also count as empty
+  const trimmedObj = trimStrings(obj);
+  const emptyStringsToUndefinedObj = emptyStringsToUndefined(trimmedObj);
+  const stringsToBooleanObj = stringsToBoolean(emptyStringsToUndefinedObj);
   return stringsToBooleanObj;
 }

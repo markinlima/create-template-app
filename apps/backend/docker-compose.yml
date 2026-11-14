@@ -1,0 +1,24 @@
+name: backend-prod
+
+networks:
+  development-net:
+    external: true
+
+services:
+  backend:
+    env_file:
+      - .env
+    profiles:
+      - backend
+    build:
+      context: ../../
+      dockerfile: ./apps/backend/dockerfile
+      target: production
+      pull: true
+    networks:
+      - development-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

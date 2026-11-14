@@ -1,25 +1,14 @@
-import type { Theme } from "./types";
-
-export interface CreateThemeRegistryOptions<TThemes extends readonly Theme[]> {
-  themes: TThemes;
-  /** Name of the theme used when nothing is stored or the stored one is not allowed. Must have level `0`. */
-  defaultThemeName: TThemes[number]["name"];
-}
-
-export interface ThemeRegistry<TThemes extends readonly Theme[]> {
-  themes: TThemes;
-  defaultTheme: TThemes[number];
-  getTheme: (name: string) => TThemes[number] | undefined;
-  /** Themes of exactly this level, dark ones first. */
-  getThemesByLevel: (level: number) => TThemes[number][];
-  /** Every level that has at least one theme, in ascending order. */
-  levels: number[];
-  isThemeAllowed: (theme: Theme, userLevel: number) => boolean;
-}
+import type { CreateThemeRegistryOptions } from "./types/create-theme-registry-options";
+import type { Theme } from "./types/theme";
+import type { ThemeRegistry } from "./types/theme-registry";
 
 /**
  * Groups the themes of an app and answers the questions the theme system needs:
  * which theme is this name, which themes belong to a level, is the user allowed to use it.
+ *
+ * @param options - See {@link CreateThemeRegistryOptions}.
+ * @returns The registry.
+ * @throws If a name is duplicated, the default theme is missing, or the default theme is not level `0`.
  */
 export function createThemeRegistry<const TThemes extends readonly Theme[]>(
   options: CreateThemeRegistryOptions<TThemes>,

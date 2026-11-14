@@ -1,15 +1,13 @@
 import { dayjs } from "../../lib/dayjs";
 
-type CalculateDaysSinceProps = string | number | Date;
-
 /**
- * Calculates the number of days between a given timestamp and the current date.
- * Accepts timestamps in various formats (string, number, or Date object).
- * @param {string | number | Date} timestamp - The timestamp to compare against the current date.
- * @returns {number} - The number of days since the provided timestamp.
- * @throws {Error} - If the input timestamp is invalid.
+ * Counts the days between a moment and now, rounding up.
+ *
+ * @param timestamp - The moment to compare with now.
+ * @returns The number of days, never negative.
+ * @example
+ * calculateDaysSince(Date.now() - 36 * 60 * 60 * 1000); // 2
  */
-
-export function calculateDaysSince(timestamp: CalculateDaysSinceProps): number {
+export function calculateDaysSince(timestamp: string | number | Date): number {
   return Math.ceil(Math.abs(dayjs(timestamp).diff(new Date(), "days", true)));
 }

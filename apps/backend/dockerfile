@@ -1,0 +1,48 @@
+ARG BUN_VERSION=1.4.4
+ARG TURBO_VERSION=2.10.9
+
+FROM oven/bun:${BUN_VERSION}-alpine AS base
+
+WORKDIR /home/bun/app
+
+FROM base AS prepare
+ARG TURBO_VERSION
+RUN bun i -g turbo@${TURBO_VERSION}
+COPY . .
+
+# ? Only the backend and the packages it depends on (`@backend/db`, `@shared/routes`) go into the image.
+RUN turbo prune backend --docker
+
+FROM base AS deps
+
+COPY --from=prepare /home/bun/app/out/json/ .
+
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun i --frozen-lockfile
+
+COPY --from=prepare --chown=bun:bun /home/bun/app/out/full/ .
+
+FROM deps AS test
+
+ENV TEST_TARGET="test:all"
+
+USER bun
+WORKDIR /home/bun/app/apps/backend
+
+# ? The database of the test stack is empty: the migrations run first, then the suite (`TEST_TARGET`: test:unit, test:e2e, lint...).
+CMD ["sh", "-c", "bun run db:migrate && exec bun run \"$TEST_TARGET\""]
+
+FROM deps AS production
+
+ENV NODE_ENV=production PORT=3333
+
+WORKDIR /home/bun/app/apps/backend
+USER bun
+
+EXPOSE 3333
+
+# ? The envs (DATABASE_URL, BETTER_AUTH_SECRET...) are given at run time, never baked into the image.
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
+    CMD ["bun", "-e", "fetch('http://localhost:' + (process.env.PORT ?? '3333') + '/healthz').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+
+CMD ["bun", "src/server.ts"]

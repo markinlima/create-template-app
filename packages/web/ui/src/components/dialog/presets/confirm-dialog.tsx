@@ -1,13 +1,14 @@
 import type { DialogPortalProps } from "@base-ui/react";
-import type { JSX, ReactNode } from "react";
+import { CheckIcon, XIcon } from "lucide-react";
+import type { ComponentType, JSX, ReactNode } from "react";
 import { cn } from "tailwind-variants";
 
 import { Button, type ButtonVariants } from "../../button";
-import { DialogClose } from "../dialog-close";
-import { DialogContent } from "../dialog-content";
-import { DialogFooter } from "../dialog-footer";
-import { DialogRoot } from "../dialog-root";
-import { DialogTrigger } from "../dialog-trigger";
+import { DialogClose } from "../components/dialog-close";
+import { DialogContent } from "../components/dialog-content";
+import { DialogFooter } from "../components/dialog-footer";
+import { DialogRoot } from "../components/dialog-root";
+import { DialogTrigger } from "../components/dialog-trigger";
 
 interface ContentDialogProps {
   children: ReactNode;
@@ -20,7 +21,7 @@ interface RootDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export interface ConfimationDialogProps
+export interface ConfirmationDialogProps
   extends ContentDialogProps,
     RootDialogProps {
   onClickConfirm?: () => void;
@@ -28,12 +29,16 @@ export interface ConfimationDialogProps
   dialogTrigger?: () => JSX.Element;
   confirmButtonVariant?: ButtonVariants["variant"];
   confirmButtonLabel?: string;
+  /** The icon of the confirm button: the icon of the action it does (the trash can to delete). @default a check */
+  confirmButtonIcon?: ComponentType<{ className?: string }>;
 }
 
-export function ConfimationDialog({
+/** A dialog that asks to confirm an action, with a confirm and a cancel button. */
+export function ConfirmationDialog({
   children,
   confirmButtonVariant = "primary",
   confirmButtonLabel = "Confirmar",
+  confirmButtonIcon: ConfirmButtonIcon = CheckIcon,
   portalContainer,
   dialogTrigger,
   className,
@@ -41,7 +46,7 @@ export function ConfimationDialog({
   onClickConfirm,
   onOpenChange,
   open,
-}: ConfimationDialogProps) {
+}: ConfirmationDialogProps) {
   function handleCancelClick() {
     onClickCancel?.();
   }
@@ -68,19 +73,24 @@ export function ConfimationDialog({
           <DialogClose
             render={
               <Button raised onClick={handleCancelClick} variant="outline">
+                <XIcon />
                 Cancelar
               </Button>
             }
           />
-          <DialogClose>
-            <Button
-              raised
-              variant={confirmButtonVariant}
-              onClick={handleConfirmClick}
-            >
-              {confirmButtonLabel}
-            </Button>
-          </DialogClose>
+          {/* ? Through `render`, like the cancel button: a Button as the child of the close would be a button inside a button. */}
+          <DialogClose
+            render={
+              <Button
+                raised
+                variant={confirmButtonVariant}
+                onClick={handleConfirmClick}
+              >
+                <ConfirmButtonIcon />
+                {confirmButtonLabel}
+              </Button>
+            }
+          />
         </DialogFooter>
       </DialogContent>
     </DialogRoot>

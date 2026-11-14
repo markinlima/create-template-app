@@ -1,0 +1,29 @@
+{
+  "name": "@backend/db",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "--- DATABASE ---": "",
+    "generate": "drizzle-kit generate --name",
+    "migrate": "drizzle-kit migrate",
+    "studio": "drizzle-kit studio",
+    "--- LINTING ---": "",
+    "lint": "bun run ts:check && biome check",
+    "ts:check": "bun check",
+    "lint:fix": "biome check --write",
+    "check": "biome check --write"
+  },
+  "dependencies": {
+    "drizzle-orm": "^1.0.0-rc.5-ab785fc"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "drizzle-kit": "^1.0.0-rc.5-ab785fc",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./migrator": "./src/migrator.ts"
+  }
+}

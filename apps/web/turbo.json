@@ -1,0 +1,12 @@
+{
+	"$schema": "../../node_modules/turbo/schema.json",
+	"extends": ["//"],
+	"tasks": {
+		"build:prepare": {
+			"outputs": ["src/gen/api/**", "src/types/routeTree.generated.ts", "src/types/images-types.generated.ts"]
+		},
+		"ts:check": {
+			"dependsOn": ["build:prepare"]
+		}
+	}
+}

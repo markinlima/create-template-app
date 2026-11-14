@@ -12,8 +12,10 @@ type CarouselContextProps = {
   canScrollNext: boolean;
 } & CarouselProps;
 
+/** The context of a {@link Carousel}: its Embla instance. It is `null` outside of one. */
 export const CarouselContext = createContext<CarouselContextProps | null>(null);
 
+/** Reads the context of a {@link Carousel}. It throws outside of one. */
 export function useCarouselContext() {
   const context = useContext(CarouselContext);
 

@@ -1,0 +1,54 @@
+@theme {
+  --animate-fade-in: fade-in 300ms ease-out;
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  --animate-fade-out: fade-out 300ms ease-out;
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+/* ? "Less motion": the browser setting (the same one `motion-reduce` reads) or the switch of the settings, which puts `data-reduced-motion` on the page. */
+@custom-variant reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @slot;
+  }
+
+  &:where([data-reduced-motion="true"], [data-reduced-motion="true"] *) {
+    @slot;
+  }
+}
+
+/* ? The "less motion" switch is global: every animation and transition ends at once (the end state is shown, nothing moves). A loading
+   spinner is the exception: it is the only sign that something is going on, so it keeps turning. */
+/* biome-ignore-start lint/complexity/noImportantStyles: it has to beat the animation and transition utilities of every component */
+:root[data-reduced-motion="true"] *,
+:root[data-reduced-motion="true"] *::before,
+:root[data-reduced-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0s !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+:root[data-reduced-motion="true"] .animate-spin {
+  animation-duration: 1s !important;
+  animation-iteration-count: infinite !important;
+}
+/* biome-ignore-end lint/complexity/noImportantStyles: see above */

@@ -1,0 +1,27 @@
+name: web-test
+
+# ? The test stack runs by itself, in a network of its own (DEV_NET, not external), apart from the dev stack.
+networks:
+  development-net:
+    name: ${DEV_NET:-development-net}
+    external: ${DEV_NET_EXTERNAL:-true}
+
+include:
+  - ../../docker-compose.services.yml
+
+services:
+  tests-runner:
+    profiles:
+      - web-test
+    env_file:
+      - .env.test
+    image: ${TEST_IMAGE_NAME:-web-test:latest}
+    build:
+      context: ../../
+      dockerfile: ./apps/web/dockerfile
+      target: test
+      pull: true
+    environment:
+      TEST_TARGET: ${TEST_TARGET:-test:all}
+    networks:
+      - development-net

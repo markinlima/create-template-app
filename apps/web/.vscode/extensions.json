@@ -1,0 +1,12 @@
+{
+	"recommendations": [
+		"biomejs.biome",
+		"csstools.postcss",
+		"aaron-bond.better-comments",
+		"vitest.explorer",
+		"bradlc.vscode-tailwindcss",
+		"ms-azuretools.vscode-containers",
+		"ms-vscode-remote.remote-containers"
+	],
+	"unwantedRecommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+}

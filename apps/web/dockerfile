@@ -1,0 +1,61 @@
+ARG BUN_VERSION=1.4.4
+ARG TURBO_VERSION=2.10.9
+
+FROM oven/bun:${BUN_VERSION}-alpine AS base
+
+WORKDIR /home/bun/app
+
+FROM base AS prepare
+ARG TURBO_VERSION
+RUN bun i -g turbo@${TURBO_VERSION}
+COPY . .
+
+RUN turbo prune web --docker
+
+FROM base AS deps
+
+COPY --from=prepare /home/bun/app/out/json/ .
+
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun i --frozen-lockfile
+
+COPY --from=prepare --chown=bun:bun /home/bun/app/out/full/ .
+
+COPY --from=prepare /home/bun/app/biome.jsonc ./biome.jsonc
+
+RUN cd apps/web && bun run build:prepare
+
+FROM deps AS build
+ENV NODE_ENV=production
+
+WORKDIR /home/bun/app/apps/web
+
+RUN --mount=type=secret,id=build-env,target=/home/bun/app/apps/web/.env,required=true \
+    bun run build
+
+FROM deps AS test
+
+ENV TEST_TARGET="test:all"
+
+# NOTE: the integration suite builds the app, which writes into node_modules (the Nitro cache) that `bun i` made as root
+RUN chown bun:bun apps/web/node_modules
+
+USER bun
+WORKDIR /home/bun/app/apps/web
+
+CMD ["sh", "-c", "exec bun run \"$TEST_TARGET\""]
+
+FROM oven/bun:${BUN_VERSION}-distroless AS production
+
+WORKDIR /app
+
+COPY --from=build /home/bun/app/apps/web/dist ./
+
+ENV NODE_ENV=production PORT=5173
+USER nonroot
+
+EXPOSE 5173
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 CMD ["bun", "health-check.ts"]
+
+# ? The entrypoint of the distroless image is already `bun`.
+CMD ["server/index.mjs"]

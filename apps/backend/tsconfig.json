@@ -1,0 +1,22 @@
+{
+	"include": ["src/**/*.ts", "scripts/**/*.ts", "drizzle.config.ts"],
+	"exclude": ["dist", "node_modules"],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ESNext"],
+		"types": ["bun"],
+		"strict": true,
+		"noEmit": true,
+		"skipLibCheck": true,
+		"verbatimModuleSyntax": true,
+		"allowImportingTsExtensions": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	}
+}

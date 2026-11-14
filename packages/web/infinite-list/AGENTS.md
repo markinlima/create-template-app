@@ -2,7 +2,7 @@
 
 ## What it is
 
-The infinite list of the web apps, kept generic so another project
+The infinite list of a web app, kept generic so another project
 can reuse it: a virtualized list, a simple list, and the scroll container
 they live in. It knows nothing about the data source or the router.
 
@@ -10,14 +10,14 @@ they live in. It knows nothing about the data source or the router.
 
 - [TanStack Virtual](https://tanstack.com/virtual) and `react-intersection-observer`
 - [Tailwind CSS 4](https://tailwindcss.com/) for the few default styles
-- [Vitest](https://vitest.dev/) for tests
+- [`bun:test`](https://bun.com/docs/test/writing-tests) for tests
 - TypeScript (strict)
 
 ## Useful scripts
 
 Run from `packages/web/infinite-list`:
 
-- `bun run test` — run the Vitest suite
+- `bun run test` — run the `bun test` suite
 - `bun run lint` — type-check plus Biome check; run it after every change
 - `bun run lint:fix` — Biome check with auto-fix
 - `bun run ts:check` — TypeScript type-check only
@@ -36,6 +36,10 @@ Run from `packages/web/infinite-list`:
   `horizontal`, `grid`). Use `custom` when the `className` brings the whole
   layout (an `@utility` with its own columns and gap): the default classes of
   the other variants would be kept next to it and can win in the CSS.
+- **Loaders in a grid**: the initial loader replaces the list (it is not inside the list's element) and the next page loader, the footer and
+  the empty state share the last `<li>` of the list, which spans every column (`col-span-full`). A skeleton loader of a grid feed therefore
+  brings the same grid classes as the list, once as the initial loader and once as the next page loader (never `enableFragment`, which
+  would stack the skeletons in one column).
 - Slots are rendered through a stable wrapper: they can use hooks and an
   inline arrow function doesn't remount the rows.
 - **Pagination trigger**: the loader at the end fires `onScrollNearEnd` when
@@ -66,3 +70,7 @@ Run from `packages/web/infinite-list`:
   `aria-busy`. `isFetching` is also true on any background refetch (a window
   focus, for example), which would pause the trigger, hide a page error and mark
   the list busy while no page is being loaded.
+
+## Memory
+
+Check `.agents/memory/` before working here (testing setup).

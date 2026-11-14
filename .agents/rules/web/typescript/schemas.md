@@ -1,7 +1,10 @@
 ---
+
 paths:
-  - "templates/web/**"
-  - "packages/web/**"
+
+- "apps/web/**"
+- "packages/web/**"
+
 ---
 
 # Schemas

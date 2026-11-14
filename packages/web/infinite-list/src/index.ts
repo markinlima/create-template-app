@@ -1,4 +1,8 @@
-export { InfiniteListScroll } from "./components/infinite-list-scroll";
+export {
+  InfiniteListScroll,
+  type InfiniteListScrollContextProps,
+  useInfiniteListScrollContext,
+} from "./components/infinite-list-scroll";
 export {
   SimpleInfiniteList,
   type SimpleInfiniteListProps,
@@ -7,13 +11,9 @@ export {
   VirtualInfiniteList,
   type VirtualInfiniteListProps,
 } from "./components/virtual-infinite-list";
-export {
-  type InfiniteListScrollContextProps,
-  useInfiniteListScrollContext,
-} from "./context";
-export type { KeyboardNavigationKeys } from "./hooks/use-keyboard-navigation";
+export type { InfiniteListData } from "./types/infinite-list-data";
 export type {
-  InfiniteListData,
   InfiniteListSlots,
   RenderItemProps,
-} from "./types";
+} from "./types/infinite-list-slots";
+export type { KeyboardNavigationKeys } from "./types/keyboard-navigation-keys";

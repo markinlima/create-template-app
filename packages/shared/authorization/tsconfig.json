@@ -1,0 +1,6 @@
+{
+  "extends": "@shared/config/typescript/base.json",
+  "compilerOptions": {
+    "types": ["@types/bun"]
+  }
+}

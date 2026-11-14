@@ -1,0 +1,27 @@
+{
+  "name": "@shared/routes",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "--- LINTING ---": "",
+    "lint": "bun run ts:check && biome check",
+    "ts:check": "bun check",
+    "lint:fix": "biome check --write",
+    "check": "biome check --write"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    "./api/*": "./src/routes/api/*/index.ts",
+    "./models": "./src/models/index.ts",
+    "./schemas": "./src/schemas/index.ts",
+    "./utils": "./src/utils/index.ts",
+    "./validators": "./src/validators/index.ts"
+  }
+}

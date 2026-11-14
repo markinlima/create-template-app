@@ -1,0 +1,30 @@
+name: Setup Bun
+description: >-
+  Installs Bun (pinned to the repo's package.json) and, unless disabled, the
+  workspace dependencies with a cached install. Run it after actions/checkout.
+
+# ? Composite action inputs are always strings: compare them with 'true', never with the boolean true.
+inputs:
+  install:
+    description: Install the workspace dependencies (bun install --frozen-lockfile).
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      with:
+        bun-version-file: package.json
+
+    - if: inputs.install == 'true'
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.bun/install/cache
+        key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+        restore-keys: bun-${{ runner.os }}-
+
+    - if: inputs.install == 'true'
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      run: bun install --frozen-lockfile

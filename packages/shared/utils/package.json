@@ -3,14 +3,14 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "--- LINTING ---": "",
+    "lint": "bun run ts:check && biome check",
+    "ts:check": "bun check",
+    "lint:fix": "biome check --write",
     "--- TESTING ---": "",
     "test": "bun run test:unit",
     "test:watch": "bun run test:unit --watch",
-    "test:unit": "bun run scripts/unit.ts",
-    "--- LINT ---": "",
-    "lint": "bun run ts:check && biome check",
-    "ts:check": "tsc --noEmit",
-    "lint:fix": "biome check --write"
+    "test:unit": "bun run scripts/unit.ts"
   },
   "devDependencies": {
     "@types/bun": "catalog:",
