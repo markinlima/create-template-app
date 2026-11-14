@@ -1,0 +1,90 @@
+name: "Reusable - App Tests"
+
+# ? One job per app with a Docker test stack: its test images are built once (a plain `docker build`, no layer cache: the
+# ? GitHub Actions cache is only readable by the same ref, so it was written on every run and read on almost none) and every
+# ? requested suite runs on them.
+on:
+  workflow_call:
+    inputs:
+      suites:
+        description: "Comma-separated suites (unit, integration, e2e). Each app runs the ones it has."
+        required: false
+        type: string
+        default: "unit,integration,e2e"
+      apps:
+        description: "Comma-separated apps to test. Empty tests the apps affected by the change."
+        required: false
+        type: string
+        default: ""
+      ref:
+        description: "Git ref to test (e.g. refs/tags/web-v1.0.5). Empty tests the ref that triggered the run."
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.apps.outputs.matrix }}
+      count: ${{ steps.apps.outputs.count }}
+    steps:
+      # ? Two checkouts because act serves the local copy only to a checkout with no `ref` key at all.
+      - if: inputs.ref == ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - if: inputs.ref != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+
+      # ? No `bun install`: the script runs Turborepo with `bunx` (the version of the root package.json), which is all it needs to list
+      # ? the affected apps, and the install (and the save of its cache afterwards) took 50 to 80 s of a job every test job waits for.
+      - uses: ./.github/actions/setup
+        with:
+          install: false
+
+      - name: Resolve the base commit
+        if: inputs.apps == ''
+        run: bun .github/scripts/scm-base.ts
+
+      - name: List the apps to test
+        id: apps
+        env:
+          APPS: ${{ inputs.apps }}
+          SUITES: ${{ inputs.suites }}
+        run: bun .github/scripts/affected-apps.ts
+
+  test:
+    needs: plan
+    if: needs.plan.outputs.count != '0'
+    name: test (${{ matrix.app.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      # ? Two checkouts for act, as in the plan job.
+      - if: inputs.ref == ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - if: inputs.ref != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: ./.github/actions/setup
+        with:
+          install: false
+
+      - name: Build the test images and run ${{ matrix.app.suites }}
+        env:
+          APP_NAME: ${{ matrix.app.name }}
+          APP_PATH: ${{ matrix.app.path }}
+          SUITES: ${{ matrix.app.suites }}
+        run: bun .github/scripts/run-app-tests.ts

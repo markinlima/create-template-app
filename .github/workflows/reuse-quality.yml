@@ -1,0 +1,53 @@
+name: "Reusable - Quality"
+
+# ? The fast checks, on the runner: Biome over the whole repo, the workflows (actionlint + shellcheck),
+# ? the CI scripts, then type-check and the libraries' unit tests of the affected workspaces.
+# ? Apps with a Docker test stack run their tests in reuse-app-tests.yml instead.
+on:
+  workflow_call:
+    secrets:
+      TURBO_TEAM:
+        required: false
+      TURBO_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+
+env:
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup
+
+      - name: Resolve the base commit
+        run: bun .github/scripts/scm-base.ts
+
+      # ? The web imports its generated API client (git-ignored) and Biome fails on unresolved imports, so the
+      # ? code is generated before the lint. A cache hit restores it (build:prepare declares it as outputs).
+      - name: Generate the web code
+        run: bunx turbo run build:prepare --filter=web
+
+      - name: Lint (Biome)
+        run: bun run lint
+
+      - name: Lint workflows (actionlint)
+        run: bun .github/scripts/actionlint.ts
+
+      - name: Check CI scripts
+        run: bun run ci:check
+
+      # ? web#ts:check depends on web#build:prepare (API client, route tree and image types).
+      - name: Type-check
+        run: bunx turbo run ts:check --filter='!mobile' ${TURBO_SCM_BASE:+--affected}
+
+      - name: Unit tests (libraries)
+        run: bunx turbo run test:unit --filter='./packages/**' ${TURBO_SCM_BASE:+--affected}
