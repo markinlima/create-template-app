@@ -1,0 +1,11 @@
+{
+  "name": "ci-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "--- LINTING ---": "",
+    "ts:check": "bun check",
+    "--- TESTING ---": "",
+    "test": "bun test"
+  }
+}
