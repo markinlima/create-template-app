@@ -1,0 +1,38 @@
+name: "CI - PR Validation"
+
+# ? Same checks as a push, plus every test suite of the affected apps (integration and e2e included).
+# ? The repeated quality job is cheap: Turborepo's remote cache replays what the push already ran.
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+      - dev
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    uses: ./.github/workflows/reuse-quality.yml
+    secrets:
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+  app-tests:
+    uses: ./.github/workflows/reuse-app-tests.yml
+    with:
+      suites: unit,integration,e2e
+
+  # ? Single check to require in the branch rules: it fails when any job above failed or was cancelled.
+  ci-ok:
+    if: always()
+    needs: [quality, app-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

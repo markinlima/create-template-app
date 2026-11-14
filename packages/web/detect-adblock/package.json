@@ -1,0 +1,27 @@
+{
+  "name": "@web/detect-adblock",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.4",
+  "scripts": {
+    "--- LINTING ---": "",
+    "ts:check": "bun check",
+    "lint": "bun run ts:check && biome check",
+    "lint:fix": "biome check --write",
+    "--- TESTING ---": "",
+    "test:unit": "bun test",
+    "test": "bun run test:unit"
+  },
+  "dependencies": {
+    "vite": "catalog:"
+  },
+  "devDependencies": {
+    "@shared/utils": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite": "./src/vite/index.ts"
+  }
+}

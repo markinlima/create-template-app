@@ -1,0 +1,30 @@
+{
+  "name": "@shared/authorization",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "--- LINTING ---": "",
+    "lint": "bun run ts:check && biome check",
+    "ts:check": "bun check",
+    "lint:fix": "biome check --write",
+    "--- TESTING ---": "",
+    "test": "bun run scripts/unit.ts",
+    "test:watch": "bun run test:unit --watch",
+    "test:unit": "bun run scripts/unit.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@casl/ability": "catalog:",
+    "@shared/config": "workspace:*",
+    "@shared/routes": "workspace:*",
+    "@shared/utils": "workspace:*",
+    "zod": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core/index.ts"
+  }
+}

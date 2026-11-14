@@ -1,9 +1,12 @@
 import { dayjs } from "../../lib/dayjs";
 
 /**
- * Calcula o tempo relativo desde um timestamp usando Day.js.
- * @param {string | number | Date} timestamp - O timestamp para comparar.
- * @returns {string} - O tempo relativo formatado em português.
+ * Tells how long ago a moment was, in Portuguese (the text is shown to the user).
+ *
+ * @param timestamp - The moment to compare with now.
+ * @returns The relative time, e.g. `"há 2 horas"`, or `"agora mesmo"` for a moment in the future.
+ * @example
+ * formatTimeAgo(Date.now() - 2 * 60 * 60 * 1000); // "há 2 horas"
  */
 export function formatTimeAgo(timestamp: string | number | Date): string {
   const pastDate = dayjs(timestamp);

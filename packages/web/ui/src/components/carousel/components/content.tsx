@@ -2,6 +2,7 @@ import { cn } from "tailwind-variants";
 
 import { useCarouselContext } from "../context/carousel-context";
 
+/** The track of a {@link Carousel} that holds and moves its items. */
 export function CarouselContent({
   className,
   ...props

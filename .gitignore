@@ -9,7 +9,7 @@ tmp
 # output
 out
 dist
-build
+/build
 *.tgz
 
 # code coverage
@@ -29,6 +29,7 @@ logs
 credentials/
 
 *.local
+.devcontainer/docker-compose.local.yml
 *generated*
 docker-compose.override.yml
 

@@ -1,0 +1,7 @@
+{
+  "pull_request": {
+    "number": 1,
+    "base": { "ref": "dev" },
+    "head": { "ref": "claude/local-act-run" }
+  }
+}

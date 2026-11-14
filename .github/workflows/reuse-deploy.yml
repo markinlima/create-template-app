@@ -1,0 +1,47 @@
+name: "Reusable - Deploy"
+
+on:
+  workflow_call:
+    inputs:
+      compose-id:
+        description: "Dokploy compose id to deploy (already resolved for the environment)"
+        required: true
+        type: string
+      environment:
+        description: "GitHub environment of the deploy (production or staging)"
+        required: true
+        type: string
+      ref:
+        description: "Git ref the deploy scripts are read from"
+        required: true
+        type: string
+    secrets:
+      DOKPLOY_URL:
+        required: true
+      DOKPLOY_API_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # ? Protection rules (required reviewers) are configured per environment in the repository settings.
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: ./.github/actions/setup
+        with:
+          install: false
+
+      - name: Trigger the Dokploy deployment
+        env:
+          COMPOSE_ID: ${{ inputs.compose-id }}
+          TARGET: ${{ inputs.environment }}
+          DOKPLOY_URL: ${{ secrets.DOKPLOY_URL }}
+          DOKPLOY_API_TOKEN: ${{ secrets.DOKPLOY_API_TOKEN }}
+        run: bun .github/scripts/dokploy-deploy.ts

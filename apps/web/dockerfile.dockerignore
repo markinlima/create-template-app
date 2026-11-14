@@ -1,0 +1,48 @@
+# ? Env files (build-time envs are passed as a BuildKit secret, never through the context)
+**/.env*
+**/*.local
+
+# ? Docker related files
+**/.dockerignore
+**/dockerfile
+**/dockerfile.dockerignore
+**/docker-compose*.yml
+
+# ? Artefacts (regenerated inside the build)
+**/node_modules
+# ? Only the build folder of an app (the artifacts): a source folder can be named `build` too
+apps/*/build
+workers/*/build
+**/dist
+**/out
+**/.turbo
+**/.tanstack
+**/*generated*
+apps/web/src/gen
+**/*.tsbuildinfo
+
+# ? Other apps' heavy folders (their package.json files are still needed by turbo prune)
+apps/mobile/android
+apps/mobile/ios
+apps/mobile/.expo
+
+# ? VCS, CI and IDE
+**/.git
+**/.github
+**/.devcontainer
+**/.vscode
+**/.zed
+**/.idea
+**/.DS_Store
+
+# ? docs
+**/README.md
+**/*.mdx
+**/*.stories.*
+
+# ? logs and reports
+**/logs
+**/*.log
+
+# ? Models
+**/*.onnx

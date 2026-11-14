@@ -18,6 +18,7 @@ export type CarouselProps = {
   setApi?: (api: CarouselApi) => void;
 };
 
+/** The root of a {@link Carousel}: it creates the Embla instance and shares it with its parts. */
 export function CarouselProvider({
   orientation = "horizontal",
   opts,

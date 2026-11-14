@@ -2,6 +2,7 @@ import { cn } from "tailwind-variants";
 
 import { useCarouselContext } from "../context/carousel-context";
 
+/** One slide of a {@link Carousel}. */
 export function CarouselItem({
   className,
   ...props

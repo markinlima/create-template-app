@@ -1,10 +1,11 @@
-import { PopoverContent } from "./popover-content";
-import { PopoverDescription } from "./popover-description";
-import { PopoverHeader } from "./popover-header";
-import { PopoverRoot } from "./popover-root";
-import { PopoverTitle } from "./popover-title";
-import { PopoverTrigger } from "./popover-trigger";
+import { PopoverContent } from "./components/popover-content";
+import { PopoverDescription } from "./components/popover-description";
+import { PopoverHeader } from "./components/popover-header";
+import { PopoverRoot } from "./components/popover-root";
+import { PopoverTitle } from "./components/popover-title";
+import { PopoverTrigger } from "./components/popover-trigger";
 
+/** A popup that opens next to its trigger. Use `Popover.trigger`, `Popover.content` and the other parts. */
 export const Popover = Object.assign(PopoverRoot, {
   trigger: PopoverTrigger,
   content: PopoverContent,

@@ -1,5 +1,6 @@
-import { ImageRoot } from "./image-root";
+import { ImageRoot } from "./components/image-root";
 
+/** An image with a placeholder while it loads. */
 export const Image = Object.assign(ImageRoot, {});
 
 /**

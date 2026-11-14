@@ -1,0 +1,32 @@
+{
+  "name": "@web/update",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.4",
+  "scripts": {
+    "--- LINTING ---": "",
+    "ts:check": "bun check",
+    "lint": "bun run ts:check && biome check",
+    "lint:fix": "biome check --write",
+    "--- TESTING ---": "",
+    "test:unit": "bun test",
+    "test": "bun run test:unit"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "zod": "catalog:",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "vite": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite": "./src/vite/index.ts"
+  }
+}
