@@ -1,0 +1,13 @@
+{
+  "id": "phase",
+  "version": "1.0.0",
+  "name": "Phase CLI",
+  "description": "Installs a pinned Phase CLI version (same one used in .github/actions/setup for CI).",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "2.3.2",
+      "description": "Phase CLI version to install."
+    }
+  }
+}

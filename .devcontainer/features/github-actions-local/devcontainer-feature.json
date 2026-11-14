@@ -1,0 +1,6 @@
+{
+  "id": "github-actions-local",
+  "version": "1.0.0",
+  "name": "GitHub Actions local tools",
+  "description": "Installs act (runs the workflows locally), actionlint (workflow linter) and ShellCheck (checks the run: scripts). Versions are pinned in install.sh, with checksums verified before install."
+}

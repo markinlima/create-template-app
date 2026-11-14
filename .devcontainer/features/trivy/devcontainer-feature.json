@@ -1,0 +1,13 @@
+{
+  "id": "trivy",
+  "version": "1.0.0",
+  "name": "Trivy",
+  "description": "Installs a pinned Trivy version into /usr/local/bin, verifying the release tarball's SHA-256 checksum before installing.",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "0.74.0",
+      "description": "Trivy version to install, without the leading 'v'."
+    }
+  }
+}

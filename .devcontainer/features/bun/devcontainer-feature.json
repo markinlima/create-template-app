@@ -1,0 +1,18 @@
+{
+  "id": "bun",
+  "version": "1.0.0",
+  "name": "Bun",
+  "description": "Installs a pinned Bun version into the container user's home and puts it on PATH.",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "1.4.3",
+      "description": "Bun version to install."
+    },
+    "username": {
+      "type": "string",
+      "default": "vscode",
+      "description": "User to install Bun for. Keep in sync with the 'username' option passed to ghcr.io/devcontainers/features/common-utils."
+    }
+  }
+}

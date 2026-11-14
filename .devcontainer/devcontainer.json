@@ -1,0 +1,121 @@
+{
+  "name": "app-dev",
+  "dockerComposeFile": ["./docker-compose.yml", "./docker-compose.local.yml"],
+  "service": "app",
+  "workspaceFolder": "/home/vscode/app",
+  "updateRemoteUserUID": true,
+  "initializeCommand": "bash .devcontainer/hooks/initialize.sh",
+  "postCreateCommand": "bash .devcontainer/hooks/post-create.sh",
+  "postAttachCommand": "bash .devcontainer/hooks/post-attach.sh",
+  "forwardPorts": [4983],
+  "portsAttributes": {
+    "4983": {
+      "label": "Drizzle Studio",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "web:5173": {
+      "label": "Web - docker",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "5173": {
+      "label": "Web - dev",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "web:5174": {
+      "label": "Web - preview",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "backend:3333": {
+      "label": "Backend - docker",
+      "onAutoForward": "notify"
+    },
+    "3333": {
+      "label": "Backend - dev",
+      "onAutoForward": "notify"
+    },
+    "postgres:5432": {
+      "label": "Postgres",
+      "onAutoForward": "notify"
+    },
+    "s3mock:9090": {
+      "label": "S3 Mock",
+      "onAutoForward": "notify"
+    },
+    "5037": {
+      "label": "ADB Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "otherPortsAttributes": {
+    "label": "Unknown Port",
+    "onAutoForward": "notify"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2.7.1": {
+      "upgradePackages": false,
+      "username": "vscode",
+      "configureZshAsDefaultShell": true
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1.10.1": {
+      "moby": false
+    },
+    // ? Mobile only (Android build). Installs Java 17 automatically (dependsOn).
+    // "./features/install-android-sdk": {
+    //   "platformsVersion": "36",
+    //   "buildToolsVersion": "36.0.0"
+    // },
+    "./features/bun": {
+      "version": "1.4.4",
+      "username": "vscode"
+    },
+    "./features/ffmpeg": {},
+    "./features/trivy": {
+      "version": "0.74.0"
+    },
+    "./features/phase": {
+      "version": "2.3.2"
+    },
+    // ? Run and lint the GitHub Actions workflows locally (act, actionlint, shellcheck)
+    "./features/github-actions-local": {},
+    // ? Node.js: required by mobile projects and claude-code. Bun is the default runtime.
+    "ghcr.io/devcontainers/features/node:2.1.2": {
+      "version": "24"
+    },
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+  // ? Bump containerVersion when dockerfile, compose or features change, so the IDE prompts a rebuild.
+  "containerEnv": {
+    "containerVersion": "8"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome", // ? biome
+        "aaron-bond.better-comments", // ? better comments
+        "github.vscode-github-actions", // ? github actions
+        "ms-azuretools.vscode-containers", // ? containers
+        "docker.docker", // ? docker dx
+        "christian-kohler.path-intellisense", // ? path intellisense
+        "ms-vscode-remote.remote-containers", // ? dev container
+        "AquaSecurityOfficial.trivy-vulnerability-scanner", // ? trivy scanner
+        "oven.bun-vscode", // ? bun
+        "TypeScriptTeam.native-preview", // ? native preview
+        "Cardinal90.multi-cursor-case-preserve", // ? multi cursor case preserve
+        "tamasfe.even-better-toml", // ? even better toml (for bunfig.toml)
+        "github.vscode-github-actions" // ? github actions
+      ]
+    },
+    "zed": {
+      "extensions": [
+        "ansible", // ? ansible
+        "biome", // ? biome
+        "comment", // ? comment
+        "dockerfile", // ? dockerfile
+        "emmet", // ? emmet
+        "html", // ? html
+        "terraform", // ? terraform
+        "toml" // ? toml
+      ]
+    }
+  }
+}
