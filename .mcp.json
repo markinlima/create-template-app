@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "bunx",
+      "args": ["chrome-devtools-mcp@latest", "--browserUrl=${QA_CHROME_URL:-http://172.19.0.1:9223}"]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp/oauth"
+    },
+    "plane": {
+      "type": "http",
+      "url": "https://mcp.plane.so/http/mcp"
+    }
+  }
+}
