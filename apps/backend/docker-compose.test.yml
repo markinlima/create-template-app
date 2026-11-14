@@ -1,0 +1,33 @@
+name: backend-test
+
+# ? The test stack runs by itself, in a network of its own (DEV_NET, not external). On the shared `development-net` it would meet the
+# ? services of the dev stack (same names, `postgres`), and the DNS would alternate between both.
+networks:
+  development-net:
+    name: ${DEV_NET:-development-net}
+    external: ${DEV_NET_EXTERNAL:-true}
+
+include:
+  - ../../docker-compose.services.yml
+
+services:
+  tests-runner:
+    profiles:
+      - backend-test
+    env_file:
+      - .env.test
+    image: ${TEST_IMAGE_NAME:-backend-test:latest}
+    build:
+      context: ../../
+      dockerfile: ./apps/backend/dockerfile
+      target: test
+      pull: true
+    environment:
+      TEST_TARGET: ${TEST_TARGET:-test:all}
+    networks:
+      - development-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
