@@ -1,0 +1,27 @@
+{
+  "projects": [
+    {
+      "id": "backend",
+      "name": "Backend",
+      "description": "Servidor da API",
+      "path": "apps/backend",
+      "dokploy": {
+        "production": "REPLACE_ME_DOKPLOY_BACKEND_PRODUCTION",
+        "staging": "REPLACE_ME_DOKPLOY_BACKEND_STAGING"
+      }
+    },
+    {
+      "id": "web",
+      "name": "Web",
+      "description": "Aplicação web (React)",
+      "path": "apps/web",
+      "dokploy": {
+        "production": "REPLACE_ME_DOKPLOY_WEB_PRODUCTION",
+        "staging": "REPLACE_ME_DOKPLOY_WEB_STAGING"
+      },
+      "phase": {
+        "appId": "REPLACE_ME_PHASE_WEB_APP_ID"
+      }
+    }
+  ]
+}

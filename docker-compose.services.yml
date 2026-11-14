@@ -1,0 +1,122 @@
+name: app-services
+
+# ? The services the apps need, one place for every compose of the repo. Each service lists the profiles that start it: the app that needs
+# ? it (`backend` to run it, `backend-test` for its test stack), and `services` (all of them). A service that only helps to look at what the apps do (`monitoring`) is in no app profile.
+
+networks:
+  development-net:
+    name: ${DEV_NET:-development-net}
+    external: ${DEV_NET_EXTERNAL:-true}
+
+volumes:
+  postgres-data:
+  redis-data:
+  rustrak-data:
+
+services:
+  # * --------------------------------------------------------------------------
+  # * postgres
+  # *  The database name comes from POSTGRES_DB (`app` by default): the test stacks set it to `app_test`.
+  # * --------------------------------------------------------------------------
+
+  postgres:
+    profiles:
+      - backend
+      - backend-test
+      - services
+    image: postgres:18-alpine
+    expose:
+      - 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    networks:
+      - development-net
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d ${POSTGRES_DB:-app}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # * --------------------------------------------------------------------------
+  # * redis
+  # * --------------------------------------------------------------------------
+
+  redis:
+    profiles:
+      - backend
+      - backend-test
+      - services
+    image: redis:8.2.2-alpine
+    expose:
+      - 6379
+    volumes:
+      - redis-data:/data
+    networks:
+      - development-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+
+  # * --------------------------------------------------------------------------
+  # * s3mock: S3-compatible storage for local development (Adobe S3Mock), on port 9090 (HTTP).
+  # *  Buckets come from S3_INITIAL_BUCKETS (comma separated); files are lost when the container stops.
+  # *  Connection: S3_ENDPOINT=http://s3mock:9090 with any access key and secret.
+  # * --------------------------------------------------------------------------
+
+  s3mock:
+    profiles:
+      - services
+    image: adobe/s3mock:3.5.2
+    expose:
+      - 9090
+    environment:
+      initialBuckets: ${S3_INITIAL_BUCKETS:-app}
+    networks:
+      - development-net
+
+  # * --------------------------------------------------------------------------
+  # * Monitoring
+  # *  Only to look at telemetry and errors locally: no test and no app depends on them, so they are
+  # *  not in the `services` profile (which the test stacks start) nor in the profiles of the apps.
+  # * --------------------------------------------------------------------------
+
+  # * openobserve: traces, metrics and logs (OpenTelemetry)
+  openobserve:
+    profiles:
+      - monitoring
+    image: openobserve/openobserve:latest
+    expose:
+      - 5080
+    environment:
+      ZO_ROOT_USER_EMAIL: "docker@docker.com" # FIXME: local only, never use it elsewhere
+      ZO_ROOT_USER_PASSWORD: "Docker@123" # FIXME: local only, never use it elsewhere
+    networks:
+      - development-net
+
+  # * rustrak: errors, Sentry compatible. The SDK of the apps sends to it (DSN `http://<key>@rustrak:8080/<project id>`,
+  # * both shown when the project is created in the panel, at http://rustrak:8080). SQLite database in the volume.
+  rustrak:
+    profiles:
+      - monitoring
+    image: rustrak/rustrak-server:v0.25.0
+    expose:
+      - 8080
+    volumes:
+      - rustrak-data:/data
+    environment:
+      HOST: "0.0.0.0"
+      PORT: 8080
+      RUST_LOG: info
+      RUSTRAK_TELEMETRY: "off"
+      # FIXME: local development only, never use these values elsewhere
+      SESSION_SECRET_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
+      CREATE_SUPERUSER: "docker@docker.com:Docker@123"
+    networks:
+      - development-net

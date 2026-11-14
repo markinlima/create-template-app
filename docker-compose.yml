@@ -1,0 +1,8 @@
+name: app
+
+# ? The whole project, to run it locally like in production: the services and every app, each one under its own profile
+# ? (`bun run script:setup-project` picks them). The tests of an app use the compose of the app, in a stack of their own.
+include:
+  - ./docker-compose.services.yml
+  - ./apps/backend/docker-compose.yml
+  - ./apps/web/docker-compose.yml
