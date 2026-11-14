@@ -1,20 +1,13 @@
-export type Platform =
-  | "android"
-  | "iphone"
-  | "linux"
-  | "macos"
-  | "windows"
-  | "unknown";
+import type { Platform } from "../types/platform";
 
 /**
- * Detecta a plataforma do usuário analisando o navigator.userAgent
- * @returns {Platform} A plataforma detectada
+ * Detects the platform of the visitor from `navigator.userAgent`.
+ *
+ * @returns The platform, or `"unknown"` when none matches.
+ * @example
+ * detectPlatform(); // "macos"
  */
 export function detectPlatform(): Platform {
-  if (typeof navigator === "undefined") {
-    return "unknown";
-  }
-
   const userAgent = navigator.userAgent.toLowerCase();
   if (/iphone|ipad|ipod/.test(userAgent)) {
     return "iphone";

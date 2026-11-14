@@ -1,22 +1,34 @@
+/** Options of {@link stringToDeterministicNumber}. */
+export interface StringToDeterministicNumberOptions {
+  /** The smallest number that can come out. */
+  min: number;
+  /** The biggest number that can come out. */
+  max: number;
+}
+
+/**
+ * Turns a string into a number from a range: the same string always gives the same number (an FNV-1a hash).
+ *
+ * @param input - The string to hash, e.g. a user id.
+ * @param options - See {@link StringToDeterministicNumberOptions}.
+ * @returns An integer from `min` to `max`, both included.
+ * @example
+ * stringToDeterministicNumber("user-1", { min: 1, max: 5 }); // always the same number from 1 to 5
+ */
 export function stringToDeterministicNumber(
-  inputString: string,
-  min: number,
-  max: number,
+  input: string,
+  { min, max }: StringToDeterministicNumberOptions,
 ): number {
-  // Simple hash function (FNV-1a hash for strings)
-  let hash = 2166136261; // 32-bit FNV-1a offset basis
-  for (let i = 0; i < inputString.length; i++) {
-    hash ^= inputString.charCodeAt(i);
+  let hash = 2166136261; // NOTE: the 32-bit FNV-1a offset basis
+  for (let i = 0; i < input.length; i++) {
+    hash ^= input.charCodeAt(i);
     hash +=
       (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
   }
 
-  // Ensure hash is positive
-  hash = hash >>> 0; // Unsigned right shift to ensure positive 32-bit integer
+  hash = hash >>> 0; // NOTE: unsigned shift keeps the hash a positive 32-bit integer
 
-  // Map the hash to the desired range
   const range = max - min + 1;
-  const result = (hash % range) + min;
 
-  return result;
+  return (hash % range) + min;
 }

@@ -1,21 +1,22 @@
 import { useCallback, useRef, useState } from "react";
 
-interface DisclosureCallbacks {
-  onOpen?: () => void;
-  onClose?: () => void;
-}
+import type { DisclosureCallbacks } from "../../types/disclosure-callbacks";
 
-interface DisclosureState {
-  isOpen: boolean;
-  open: () => void;
-  close: () => void;
-  toggle: () => void;
-}
-
+/**
+ * The open and closed state of something (a dialog, a menu) with the functions that change it. The callbacks run only when the state
+ * really changes, and the latest ones are used without the functions changing.
+ *
+ * @param initialState - Whether it starts open.
+ * @defaultValue false
+ * @param callbacks - See `DisclosureCallbacks`.
+ * @returns A tuple: whether it is open and `{ open, close, toggle }`.
+ * @example
+ * const [isOpen, { open, close }] = useDisclosure(false, { onClose: reset });
+ */
 export function useDisclosure(
   initialState = false,
   callbacks?: DisclosureCallbacks,
-): [boolean, Omit<DisclosureState, "isOpen">] {
+): [boolean, { open: () => void; close: () => void; toggle: () => void }] {
   const callbacksRef = useRef(callbacks);
   callbacksRef.current = callbacks;
 

@@ -2,24 +2,32 @@
   "name": "@web/shared",
   "type": "module",
   "private": true,
-  "packageManager": "bun@1.4.0",
+  "packageManager": "bun@1.4.4",
   "scripts": {
-    "test": "vitest run",
+    "--- LINTING ---": "",
     "lint": "bun run ts:check && biome check",
-    "ts:check": "tsc --noEmit",
-    "lint:fix": "biome check --write"
+    "ts:check": "bun check",
+    "lint:fix": "biome check --write",
+    "--- TESTING ---": "",
+    "test:unit": "bun test",
+    "test": "bun run test:unit"
   },
   "dependencies": {
-    "dayjs": "^1.11.23",
-    "react": "19.3.0"
+    "@shared/routes": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "dayjs": "catalog:",
+    "immer": "^11.1.18",
+    "react": "catalog:"
   },
   "devDependencies": {
-    "@types/bun": "1.3.14",
-    "@types/react": "^19.3.0",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.2"
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./hooks": "./src/hooks/index.ts",
+    "./infinite-data": "./src/utils/infinite-data/index.ts",
+    "./lib": "./src/lib/index.ts",
+    "./utils": "./src/utils/index.ts"
   }
 }
