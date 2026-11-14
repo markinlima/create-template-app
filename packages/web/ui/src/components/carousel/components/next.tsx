@@ -4,6 +4,7 @@ import { cn } from "tailwind-variants";
 import { Button } from "../../button";
 import { useCarouselContext } from "../context/carousel-context";
 
+/** The button that goes to the next slide of a {@link Carousel}. */
 export function CarouselNext({
   className,
   variant = "primary",
