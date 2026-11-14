@@ -1,17 +1,19 @@
 import { createFormHook } from "@tanstack/react-form";
 
-import { fieldContext, formContext } from "./context/app-form-context";
-import { ColorPickerField } from "./fields/color-picker-field";
-import { CropImageField } from "./fields/crop-image-field/crop-image-field";
-import { NumberField } from "./fields/number-field";
-import { OTPField } from "./fields/otp-field";
-import { PasswordField } from "./fields/password-field";
-import { RadioField } from "./fields/radio-field";
-import { SelectField } from "./fields/select-field";
-import { SimpleRelativeDatePicker } from "./fields/simple-relative-date-picker";
-import { TagsField } from "./fields/tags-field";
-import { TextField } from "./fields/text-field";
-import { TextareaField } from "./fields/textarea-field";
+import { CentsField } from "./components/fields/cents-field";
+import { CheckboxField } from "./components/fields/checkbox-field";
+import { ColorPickerField } from "./components/fields/color-picker-field";
+import { CropImageField } from "./components/fields/crop-image-field";
+import { NumberField } from "./components/fields/number-field";
+import { OTPField } from "./components/fields/otp-field";
+import { PasswordField } from "./components/fields/password-field";
+import { RadioField } from "./components/fields/radio-field";
+import { SelectField } from "./components/fields/select-field";
+import { SimpleRelativeDatePicker } from "./components/fields/simple-relative-date-picker";
+import { TagsField } from "./components/fields/tags-field";
+import { TextField } from "./components/fields/text-field";
+import { TextareaField } from "./components/fields/textarea-field";
+import { fieldContext, formContext } from "./contexts/app-form-context";
 
 type FormHookOptions = Parameters<typeof createFormHook>[0];
 type ComponentsRecord = FormHookOptions["fieldComponents"];
@@ -26,10 +28,15 @@ const builtInFieldComponents = {
   SelectField,
   TagsField,
   NumberField,
+  CentsField,
   RadioField,
+  CheckboxField,
   SimpleRelativeDatePicker,
 };
 
+/**
+ * Options of {@link createAppForm}.
+ */
 export interface CreateAppFormOptions<
   TFieldComponents extends ComponentsRecord,
   TFormComponents extends ComponentsRecord,
@@ -46,39 +53,39 @@ export interface CreateAppFormOptions<
 }
 
 /**
- * Creates the app form hooks (`useAppForm`, `withForm`, ...) with the built-in
- * components plus the ones registered by the consuming app.
+ * Message shown by `Form.error` when the submit fails and the app can't read a message from the error.
  */
 export const DEFAULT_SUBMIT_ERROR_MESSAGE =
   "Não foi possível enviar o formulário. Tente novamente.";
 
+/**
+ * Creates the app form hooks (`useAppForm`, `withForm`, ...) with the built-in
+ * components plus the ones registered by the consuming app.
+ *
+ * @param options - See {@link CreateAppFormOptions}.
+ * @returns The hooks of TanStack Form, with `useAppForm` wrapped to store the errors of `onSubmit`.
+ * @example
+ * export const { useAppForm, withForm } = createAppForm({
+ *   getSubmitErrorMessage: getApiErrorMessage,
+ * });
+ */
 export function createAppForm<
   TFieldComponents extends ComponentsRecord = Record<never, never>,
   TFormComponents extends ComponentsRecord = Record<never, never>,
 >(options: CreateAppFormOptions<TFieldComponents, TFormComponents> = {}) {
   const { fieldComponents, formComponents, getSubmitErrorMessage } = options;
 
-  // ? The registered components win over the built-in ones with the same name,
-  // ? so the overridden built-in types are dropped from the result.
+  // NOTE: registered components win over built-in ones with the same name
   const hooks = createFormHook({
-    fieldComponents: {
-      ...builtInFieldComponents,
-      ...fieldComponents,
-    } as unknown as Omit<
-      typeof builtInFieldComponents,
-      keyof TFieldComponents
-    > &
-      TFieldComponents,
-    formComponents: { ...formComponents } as TFormComponents,
+    fieldComponents: { ...builtInFieldComponents, ...fieldComponents },
+    formComponents: { ...formComponents },
     fieldContext,
     formContext,
   });
 
   const { useAppForm: useBaseAppForm } = hooks;
 
-  // ? TanStack Form rethrows whatever the form's `onSubmit` throws and never stores it in
-  // ? the form state. Catch it and store it as the form-level `onSubmit` error so `Form.error`
-  // ? can show it. It is cleared by the next validation run (field change/blur or submit).
+  // NOTE: TanStack Form rethrows `onSubmit` errors and never stores them, so store one for `Form.error`
   const useAppForm: typeof useBaseAppForm = (formOptions) => {
     const { onSubmit } = formOptions;
 
@@ -89,11 +96,16 @@ export function createAppForm<
             try {
               await onSubmit(props);
             } catch (error) {
-              // ? The error map value type is derived from the form's validators, which a plain message doesn't satisfy.
+              const message = getSubmitErrorMessage?.(error);
+
+              // NOTE: unknown error: the user sees the generic text, so log the real one
+              if (message === undefined) {
+                console.error("[form] onSubmit threw:", error);
+              }
+
+              // NOTE: the error map type comes from the validators, which a plain message doesn't satisfy
               props.formApi.setErrorMap({
-                onSubmit:
-                  getSubmitErrorMessage?.(error) ??
-                  DEFAULT_SUBMIT_ERROR_MESSAGE,
+                onSubmit: message ?? DEFAULT_SUBMIT_ERROR_MESSAGE,
               } as Parameters<typeof props.formApi.setErrorMap>[0]);
             }
           }
