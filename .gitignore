@@ -29,6 +29,7 @@ logs
 credentials/
 
 *.local
+.devcontainer/docker-compose.local.yml
 *generated*
 docker-compose.override.yml
 

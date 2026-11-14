@@ -10,6 +10,8 @@
     "ignoreUnknown": false,
     "includes": [
       "**",
+      "!**/.git",
+      "!**/node_modules",
       "!**/.turbo",
       "!**/dist",
       "!**/build",
@@ -69,17 +71,13 @@
         }
       },
       "nursery": {
-        "useSortedClasses": {
+        "useTailwindSortedClasses": {
           "level": "info",
-          "fix": "safe",
-          "options": {
-            "attributes": ["classList"],
-            "functions": ["clsx", "cva", "cn", "tw", "tw.*", "tv"]
-          }
-        },
-        "useImportsFirst": "error"
+          "fix": "safe"
+        }
       },
       "style": {
+        "useImportsFirst": "error",
         "noParameterAssign": "error",
         "useAsConstAssertion": "error",
         "useDefaultParameterLast": "error",
@@ -103,6 +101,11 @@
       "quoteStyle": "double",
       "jsxQuoteStyle": "double",
       "semicolons": "always"
+    }
+  },
+  "markdown": {
+    "formatter": {
+      "formatEmbeds": false
     }
   },
   "css": {
