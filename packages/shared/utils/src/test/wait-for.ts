@@ -13,8 +13,10 @@ interface WaitForOptions {
 }
 
 /**
- * Polls `condition` until it returns a truthy value (or stops throwing),
- * resolving with that value. Rejects if the timeout elapses first.
+ * Polls `condition`, resolving with the value it returned. By default it
+ * resolves as soon as `condition` does not throw (whatever the value, even a
+ * falsy one); with `conditional: true` it waits for a truthy value. Rejects
+ * if the timeout elapses first, with the last error as the `cause`.
  *
  * Minimal stand-in for `node:test`'s `TestContext.waitFor`, which Bun's
  * test runner does not implement yet.
@@ -31,16 +33,8 @@ export async function waitFor<T>(
     try {
       const result = await condition();
 
-      if (conditional) {
-        if (result) {
-          return result;
-        }
-      } else {
-        if (result) {
-          return result;
-        }
-
-        return undefined as T;
+      if (!conditional || result) {
+        return result;
       }
     } catch (error) {
       lastError = error;
