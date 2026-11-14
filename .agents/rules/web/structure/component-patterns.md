@@ -1,7 +1,10 @@
 ---
+
 paths:
-  - "templates/web/**"
-  - "packages/web/**"
+
+- "apps/web/**"
+- "packages/web/**"
+
 ---
 
 # Component patterns
@@ -13,7 +16,7 @@ exist because these mistakes keep showing up in new code.
 
 If a component has children, or can be split into parts, it is a
 **compound component** — root plus parts attached with `Object.assign`.
-Follow [compound-components.md](./compound-components.md) for the folder
+Follow [compound-components.md](../react/compound-components.md) for the folder
 structure, naming and exports.
 
 ## One component per file
@@ -22,7 +25,7 @@ Never declare more than one component in the same file.
 
 - First check whether the pieces belong to a compound component. If they do,
   make each one a part (one file per part) as described in
-  [compound-components.md](./compound-components.md).
+  [compound-components.md](../react/compound-components.md).
 - If they do not fit a compound component, split them into separate files
   and group them in a folder with a common name (e.g. `comment-feed/`
   holding the files for that feature). Each file exports one component.
@@ -35,7 +38,7 @@ Helper functions (anything that is not a component and not a handler declared
 inside a component's body) never share a file with a component or with another
 function. Each one goes in its own file in a `utils/` folder (hooks in
 `hooks/`) next to the component that uses it, as described in
-[compound-components.md](./compound-components.md). Constants, types and
+[compound-components.md](../react/compound-components.md). Constants, types and
 schemas may share a file with each other, but not with a component.
 
 ## Function declarations, not arrow functions
