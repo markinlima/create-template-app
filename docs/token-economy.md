@@ -29,14 +29,15 @@ Every claim carries one of three labels, so you can tell what to trust:
 - A cache entry expires after a period of inactivity, and every hit resets the
   timer. The lifetime (TTL) depends on who is asking:
 
-| Request bucket                                             | Claude subscription, within plan usage | API key, cloud provider or usage credits |
-| ---------------------------------------------------------- | -------------------------------------- | ---------------------------------------- |
-| Main conversation                                          | 1 hour                                 | 5 minutes                                |
-| Everything else (subagents, forks, workflows, compaction)  | 5 minutes                              | 5 minutes                                |
+| Request bucket                                            | Claude subscription, within plan usage | API key, cloud provider or usage credits |
+| --------------------------------------------------------- | -------------------------------------- | ---------------------------------------- |
+| Main conversation                                         | 1 hour                                 | 5 minutes                                |
+| Everything else (subagents, forks, workflows, compaction) | 5 minutes                              | 5 minutes                                |
 
-  Settings: `promptCacheTtl` (main conversation) and `subagentPromptCacheTtl`
-  (everything else), or the `CLAUDE_CODE_PROMPT_CACHE_TTL` and
-  `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL` variables; each takes `5m` or `1h`.
+Settings: `promptCacheTtl` (main conversation) and `subagentPromptCacheTtl`
+(everything else), or the `CLAUDE_CODE_PROMPT_CACHE_TTL` and
+`CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL` variables; each takes `5m` or `1h`.
+
 - A cache write costs more than plain input and a cache read costs much less
   (see 1.2), so a long session is cheap per reply but never free: **every token
   that enters the context is re-read on every later reply.**
@@ -47,12 +48,12 @@ Relative to the model's input price. Taken from the Claude API reference for
 the current models (cached 2026-11-03); confirm on the live pricing page before
 turning them into money.
 
-| Item                                | Multiplier                                                                 |
-| ----------------------------------- | -------------------------------------------------------------------------- |
-| Cache write, 5-minute TTL           | 1.25x                                                                      |
-| Cache write, 1-hour TTL             | 2x                                                                         |
-| Cache read                          | 0.1x in general; 0.05x on Sonnet 5.5 and Opus 5.5; 0.025x on Fable 5.2     |
-| Output (Sonnet, Opus, Haiku 5.5, Fable 5.2) | 5x                                                                 |
+| Item                                        | Multiplier                                                             |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| Cache write, 5-minute TTL                   | 1.25x                                                                  |
+| Cache write, 1-hour TTL                     | 2x                                                                     |
+| Cache read                                  | 0.1x in general; 0.05x on Sonnet 5.5 and Opus 5.5; 0.025x on Fable 5.2 |
+| Output (Sonnet, Opus, Haiku 5.5, Fable 5.2) | 5x                                                                     |
 
 The cache-read multiplier for Haiku 5.5 was not confirmed in the pricing pages
 we read. Our "units" below use read 0.1x, write 1.25x and output 5x, so on
@@ -83,21 +84,21 @@ the cost. The lever is keeping the context small.
 
 Three ways to do a piece of work. All facts are **official** unless marked.
 
-| Aspect                  | Inline (main conversation)                                         | Subagent (fresh)                                                                                                                  | Fork                                                                  |
-| ----------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Context it starts with  | The whole conversation so far; it keeps growing                    | Empty window plus the delegation prompt. It does not see the history, the skills already invoked or the files already read        | The whole conversation so far, exactly as the main session has it     |
-| System prompt           | Claude Code's                                                      | The agent's own prompt plus environment details, not Claude Code's                                                                | Same as the main session                                              |
-| Project instructions    | `CLAUDE.md`, auto memory, rules                                    | The `CLAUDE.md` hierarchy and a git status snapshot (skipped by Explore and Plan); no auto memory, no output style                | Same as the main session                                              |
-| Skills                  | Loaded on demand                                                   | Only those listed in its `skills` field are injected                                                                              | Same as the main session                                              |
-| Tools                   | All                                                                | Inherited, narrowed by `tools` and `disallowedTools`; a background subagent gets a smaller set                                    | The main session's exact tool pool                                    |
-| Model                   | The session model                                                  | Per-call `model` alias, then the definition's `model`, then `CLAUDE_CODE_SUBAGENT_MODEL`, then the main model                    | Same as the main session                                              |
-| Prompt cache            | The main conversation's cache                                      | Its own cache. Its first request does not read the parent's; the parent's cache is unaffected                                     | Its first request reads the parent's cache                            |
-| Cache TTL               | See 1.1                                                            | 5 minutes by default, even on a subscription                                                                                      | 5 minutes by default (bucket "everything else")                       |
-| What reaches the main context | Everything, every tool result                                | Only the final report                                                                                                             | Only the final result                                                 |
-| Asking the user         | Yes                                                                | No `AskUserQuestion`; permission prompts still reach you                                                                          | Steerable from the fork panel (open its transcript, send messages)    |
-| Steering                | Interrupt or `/rewind` at any step                                 | Runs until it finishes or hits `maxTurns`; can be resumed                                                                         | Runs in the background; you can stop it or message it                 |
-| Nesting                 | n/a                                                                | Can spawn subagents up to three layers deep (`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`)                                              | Cannot spawn forks                                                    |
-| Persistence             | The session transcript                                             | A transcript per invocation, kept `cleanupPeriodDays` (30 by default). A `memory` field gives a persistent directory; default is none | Not stated in the docs we read                                    |
+| Aspect                        | Inline (main conversation)                      | Subagent (fresh)                                                                                                                      | Fork                                                               |
+| ----------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Context it starts with        | The whole conversation so far; it keeps growing | Empty window plus the delegation prompt. It does not see the history, the skills already invoked or the files already read            | The whole conversation so far, exactly as the main session has it  |
+| System prompt                 | Claude Code's                                   | The agent's own prompt plus environment details, not Claude Code's                                                                    | Same as the main session                                           |
+| Project instructions          | `CLAUDE.md`, auto memory, rules                 | The `CLAUDE.md` hierarchy and a git status snapshot (skipped by Explore and Plan); no auto memory, no output style                    | Same as the main session                                           |
+| Skills                        | Loaded on demand                                | Only those listed in its `skills` field are injected                                                                                  | Same as the main session                                           |
+| Tools                         | All                                             | Inherited, narrowed by `tools` and `disallowedTools`; a background subagent gets a smaller set                                        | The main session's exact tool pool                                 |
+| Model                         | The session model                               | Per-call `model` alias, then the definition's `model`, then `CLAUDE_CODE_SUBAGENT_MODEL`, then the main model                         | Same as the main session                                           |
+| Prompt cache                  | The main conversation's cache                   | Its own cache. Its first request does not read the parent's; the parent's cache is unaffected                                         | Its first request reads the parent's cache                         |
+| Cache TTL                     | See 1.1                                         | 5 minutes by default, even on a subscription                                                                                          | 5 minutes by default (bucket "everything else")                    |
+| What reaches the main context | Everything, every tool result                   | Only the final report                                                                                                                 | Only the final result                                              |
+| Asking the user               | Yes                                             | No `AskUserQuestion`; permission prompts still reach you                                                                              | Steerable from the fork panel (open its transcript, send messages) |
+| Steering                      | Interrupt or `/rewind` at any step              | Runs until it finishes or hits `maxTurns`; can be resumed                                                                             | Runs in the background; you can stop it or message it              |
+| Nesting                       | n/a                                             | Can spawn subagents up to three layers deep (`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`)                                                  | Cannot spawn forks                                                 |
+| Persistence                   | The session transcript                          | A transcript per invocation, kept `cleanupPeriodDays` (30 by default). A `memory` field gives a persistent directory; default is none | Not stated in the docs we read                                     |
 
 Facts that follow from the table:
 
@@ -173,20 +174,20 @@ There are two reasons to delegate and only the first is about tokens:
 independent context, a fixed procedure, restricted tools or another model. For
 the second, the value is quality and isolation, and the run costs tokens.
 
-| Situation                                                                        | Choice                                     | Saves tokens?                                                          |
-| -------------------------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------- |
-| A known file, one grep, a few lines, a quick targeted change                     | Inline                                     | No: the startup costs more than the work                               |
-| Lint, type-check, tests, with output filtered in the same command                | Inline                                     | No: measured median output of 381 characters; a 3 s lint as a subagent cost ~50k units |
-| A slow command (build, full suite, migration)                                    | Background command with a timeout, same session | Yes: no extra prefix, no extra context                            |
-| Planning a feature                                                               | Inline; hard or risky work: built-in `Plan` with `model: "opus"` | n/a: planning needs the conversation's context       |
-| Commit, PR, release                                                              | Inline                                     | No: they need your approval and run outward-facing commands; shrink `C` with `/clear` instead |
-| Many file reads or a log that cannot be filtered, only the conclusion matters    | Subagent on haiku or sonnet                | Yes, when `R` is above the break-even (~13k tokens at small `C`)       |
-| Several replies of side work while the main context is huge (150k+)              | Subagent                                   | Yes, but `/clear` first is usually cheaper                             |
-| Side task that needs most of the conversation as background, small `C`          | Fork                                       | Often: no startup, shared cache                                        |
-| Independent review by a context that did not write the code                      | Subagent (reviewer)                        | No: it is worth it for quality                                         |
-| Independent investigations that do not depend on each other                      | Several subagents in one message           | Time yes, tokens no: each pays its own prefix                          |
-| Implementation you want to steer step by step                                    | Inline                                     | n/a: a subagent cannot be steered mid-run                              |
-| Agent teams or dynamic workflows                                                 | Only when the task really fans out         | No: agent teams use ~7x the tokens of a standard session in plan mode (official) |
+| Situation                                                                     | Choice                                                           | Saves tokens?                                                                                 |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| A known file, one grep, a few lines, a quick targeted change                  | Inline                                                           | No: the startup costs more than the work                                                      |
+| Lint, type-check, tests, with output filtered in the same command             | Inline                                                           | No: measured median output of 381 characters; a 3 s lint as a subagent cost ~50k units        |
+| A slow command (build, full suite, migration)                                 | Background command with a timeout, same session                  | Yes: no extra prefix, no extra context                                                        |
+| Planning a feature                                                            | Inline; hard or risky work: built-in `Plan` with `model: "opus"` | n/a: planning needs the conversation's context                                                |
+| Commit, PR, release                                                           | Inline                                                           | No: they need your approval and run outward-facing commands; shrink `C` with `/clear` instead |
+| Many file reads or a log that cannot be filtered, only the conclusion matters | Subagent on haiku or sonnet                                      | Yes, when `R` is above the break-even (~13k tokens at small `C`)                              |
+| Several replies of side work while the main context is huge (150k+)           | Subagent                                                         | Yes, but `/clear` first is usually cheaper                                                    |
+| Side task that needs most of the conversation as background, small `C`        | Fork                                                             | Often: no startup, shared cache                                                               |
+| Independent review by a context that did not write the code                   | Subagent (reviewer)                                              | No: it is worth it for quality                                                                |
+| Independent investigations that do not depend on each other                   | Several subagents in one message                                 | Time yes, tokens no: each pays its own prefix                                                 |
+| Implementation you want to steer step by step                                 | Inline                                                           | n/a: a subagent cannot be steered mid-run                                                     |
+| Agent teams or dynamic workflows                                              | Only when the task really fans out                               | No: agent teams use ~7x the tokens of a standard session in plan mode (official)              |
 
 ### 3.3 Briefing a subagent
 
@@ -325,7 +326,7 @@ Files live in `.agents/agents/` (mirrored to `.claude/agents/`); the rules are i
 | Agent                   | Cost (units)                              | Kept out of the main context              | Result                                                                                                                                                                                                                                                                                                                                         |
 | ----------------------- | ----------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `doc-updater`           | ~121k (51k write, 182k read, 7.7k output) | ~17k tokens                               | two stale docs, one unsupported example and a code bug; about even with reading inline                                                                                                                                                                                                                                                         |
-| `code-reviewer` (blind) | ~53k (17k startup)                        | ~7.5k tokens                              | found the seeded bug (a stray `:` left in a Tailwind class) and a behavior regression; one of its two main findings (no reduced-motion handling) was wrong, a global rule exists in the app's global stylesheet; about even with reading inline (~47k at N = 50)                                                                              |
+| `code-reviewer` (blind) | ~53k (17k startup)                        | ~7.5k tokens                              | found the seeded bug (a stray `:` left in a Tailwind class) and a behavior regression; one of its two main findings (no reduced-motion handling) was wrong, a global rule exists in the app's global stylesheet; about even with reading inline (~47k at N = 50)                                                                               |
 | `explorer`              | ~69k (17k startup)                        | ~3k tokens                                | correct answer to a medium question; inline would have cost ~19k, so it was not worth it                                                                                                                                                                                                                                                       |
 | `browser-tester`        | ~60k (27k startup, 20 tool calls)         | ~4.5k tokens of text, plus one screenshot | on a tiny local fixture with 4 planted problems it found all 4 (console error, 404 image, button without a name, low contrast) and one extra (image without `alt`); the startup is ~10k larger than the other agents, probably the browser tool schemas. Tokens alone do not justify it on a page this small; a real app page was not measured |
 
