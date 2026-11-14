@@ -47,7 +47,7 @@ jobs:
 
       # ? web#ts:check depends on web#build:prepare (API client, route tree and image types).
       - name: Type-check
-        run: bunx turbo run ts:check --filter='!mobile' ${TURBO_SCM_BASE:+--affected}
+        run: bunx turbo run ts:check ${TURBO_SCM_BASE:+--affected}
 
       - name: Unit tests (libraries)
         run: bunx turbo run test:unit --filter='./packages/**' ${TURBO_SCM_BASE:+--affected}
