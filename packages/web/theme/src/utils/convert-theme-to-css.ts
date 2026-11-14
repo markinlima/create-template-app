@@ -1,4 +1,4 @@
-import type { ThemeColors } from "./types";
+import type { ThemeColors } from "../types/theme";
 
 /** Converts the theme colors to CSS variable declarations, e.g. `--background: hsl(...);`. */
 export function convertThemeToCss(colors: Partial<ThemeColors>) {

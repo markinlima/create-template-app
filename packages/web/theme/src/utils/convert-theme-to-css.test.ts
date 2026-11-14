@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 
-import { convertThemeToCss } from "./css";
+import { convertThemeToCss } from "./convert-theme-to-css";
 
 describe("convertThemeToCss", () => {
   it("should convert colors to CSS variable declarations", () => {

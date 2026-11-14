@@ -1,4 +1,4 @@
-import type { Theme } from "./types";
+import type { Theme } from "../types/theme";
 
 /**
  * Defines a theme with full type checking (every color token is required) while keeping
