@@ -1,6 +1,7 @@
+import { describe, expect, it } from "bun:test";
+
 import { useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
 
 import { RenderSlot } from "./render-slot";
 

@@ -1,15 +1,14 @@
 import type { ReactNode } from "react";
 import { cn } from "tailwind-variants";
 
-import { RenderSlot } from "../../render-slot";
-import type { InfiniteListData, InfiniteListSlots } from "../../types";
-import {
-  DefaultEmpty,
-  DefaultFooter,
-  DefaultInitialLoader,
-  DefaultNextPageError,
-} from "../defaults";
-import { InfiniteListLoader } from "../infinite-list-loader/infinite-list-loader";
+import type { InfiniteListData } from "../../../types/infinite-list-data";
+import type { InfiniteListSlots } from "../../../types/infinite-list-slots";
+import { DefaultEmpty } from "../../internal/defaults/default-empty";
+import { DefaultFooter } from "../../internal/defaults/default-footer";
+import { DefaultInitialLoader } from "../../internal/defaults/default-initial-loader";
+import { DefaultNextPageError } from "../../internal/defaults/default-next-page-error";
+import { InfiniteListLoader } from "../../internal/infinite-list-loader";
+import { RenderSlot } from "../../internal/render-slot";
 
 export interface SimpleInfiniteListProps<T>
   extends InfiniteListData<T>,
@@ -19,10 +18,13 @@ export interface SimpleInfiniteListProps<T>
   /**
    * Layout of the items. `custom` adds no layout (display, columns or gap): the `className` defines all of it, e.g. a
    * Tailwind `@utility`, whose classes `tailwind-merge` can't tell apart from the default ones and would keep both.
-   * @default "vertical"
+   * @defaultValue "vertical"
    */
   listVariant?: "vertical" | "horizontal" | "grid" | "custom";
+  /** Classes of the list element. */
   className?: string;
+  /** Space above the list in px, e.g. the height of an absolute `InfiniteListScroll.header` that floats over it. */
+  marginTop?: number;
 }
 
 /**
@@ -33,6 +35,7 @@ export function SimpleInfiniteListRoot<T>({
   data,
   className,
   listVariant = "vertical",
+  marginTop,
   isNextPageAvailable,
   isLoadingInitialData,
   isFetchingNextPage,
@@ -51,8 +54,7 @@ export function SimpleInfiniteListRoot<T>({
   }
 
   const items = data ?? [];
-  // ? Without `onScrollNearEnd` the list can't load more by itself (e.g. a manual "load more" button
-  // ? outside of it), so the loader only shows up while a page is being fetched.
+  // NOTE: without `onScrollNearEnd` the list can't load more by itself, so the loader shows only while fetching
   const canLoadMore = onScrollNearEnd !== undefined || isFetchingNextPage;
   const hasNextPageError =
     isNextPageAvailable &&
@@ -65,6 +67,7 @@ export function SimpleInfiniteListRoot<T>({
   return (
     <ul
       aria-busy={isFetchingNextPage}
+      style={{ marginTop }}
       className={cn(
         "h-fit w-full",
         {
@@ -82,7 +85,8 @@ export function SimpleInfiniteListRoot<T>({
           <RenderSlot render={renderItem} props={{ item, index }} />
         </li>
       ))}
-      <li>
+      {/* NOTE: spans every column in a grid; no effect in the other layouts */}
+      <li className="col-span-full">
         {!isNextPageAvailable && items.length > 0 && (
           <RenderSlot render={renderFooter} props={undefined} />
         )}
@@ -101,9 +105,9 @@ export function SimpleInfiniteListRoot<T>({
             loadedCount={items.length}
             onLoaderInView={onScrollNearEnd}
           >
-            {renderNextPageLoader ? (
+            {!!renderNextPageLoader && (
               <RenderSlot render={renderNextPageLoader} props={undefined} />
-            ) : null}
+            )}
           </InfiniteListLoader>
         )}
       </li>

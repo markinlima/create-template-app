@@ -1,7 +1,8 @@
-import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 
-import { SimpleInfiniteList, type SimpleInfiniteListProps } from ".";
+import { renderToStaticMarkup } from "react-dom/server";
+
+import { SimpleInfiniteList, type SimpleInfiniteListProps } from "..";
 
 const baseProps: SimpleInfiniteListProps<{ id: number }> = {
   data: [{ id: 1 }, { id: 2 }],
@@ -164,5 +165,14 @@ describe("SimpleInfiniteList accessibility", () => {
     expect(render({ isFetchingNextPage: false })).toContain(
       'aria-busy="false"',
     );
+  });
+
+  // NOTE: in a grid the last row must span every column, or a grid of skeletons is squeezed into one cell
+  it("should make the last row span every column of a grid", () => {
+    expect(render({ isNextPageAvailable: true })).toContain(
+      '<li class="col-span-full">',
+    );
+    expect(render()).toContain('<li class="col-span-full">');
+    expect(render({ data: [] })).toContain('<li class="col-span-full">');
   });
 });

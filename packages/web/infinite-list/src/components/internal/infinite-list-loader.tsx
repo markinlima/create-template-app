@@ -1,7 +1,7 @@
 import { type ReactNode, useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { DefaultNextPageLoader } from "../defaults";
+import { DefaultNextPageLoader } from "./defaults/default-next-page-loader";
 
 interface InfiniteListLoaderProps {
   /** Called when the loader gets in view and again, if still in view, once more items were loaded. */

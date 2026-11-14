@@ -1,24 +1,15 @@
+import { useHotkeys } from "@tanstack/react-hotkeys";
 import type { ScrollToOptions, VirtualItem } from "@tanstack/react-virtual";
 import { useEffect, useRef } from "react";
 
-import { useIsInputFocused } from "@web/shared/hooks/use-is-input-focused";
-import { useKeypress } from "@web/shared/hooks/use-key-press";
-
+import { DEFAULT_KEYBOARD_NAVIGATION_KEYS } from "../../constants/default-keyboard-navigation-keys";
+import type { KeyboardNavigationKeys } from "../../types/keyboard-navigation-keys";
 import {
   isKeyboardNavigationActive,
   registerKeyboardNavigation,
 } from "./keyboard-navigation-stack";
 
-export interface KeyboardNavigationKeys {
-  previous: string;
-  next: string;
-}
-
-export const DEFAULT_KEYBOARD_NAVIGATION_KEYS: KeyboardNavigationKeys = {
-  previous: "w",
-  next: "s",
-};
-
+/** Options of {@link useKeyboardNavigation}. */
 interface UseKeyboardNavigationOptions {
   scrollToIndex: (index: number, options?: ScrollToOptions) => void;
   getVirtualItems: () => VirtualItem[];
@@ -37,7 +28,6 @@ export function useKeyboardNavigation({
 }: UseKeyboardNavigationOptions) {
   const isScrolling = useRef(false);
   const id = useRef(Symbol("keyboard-navigation"));
-  const isInputFocused = useIsInputFocused();
 
   useEffect(() => {
     if (!enabled) {
@@ -47,11 +37,10 @@ export function useKeyboardNavigation({
     return registerKeyboardNavigation(id.current);
   }, [enabled]);
 
-  function handleChangeIndex(event: KeyboardEvent) {
+  function handleChangeIndex(direction: 1 | -1) {
     if (
       isScrolling.current ||
       !enabled ||
-      isInputFocused ||
       !isKeyboardNavigationActive(id.current)
     ) {
       return;
@@ -73,8 +62,6 @@ export function useKeyboardNavigation({
         : previous,
     );
 
-    const direction = event.key.toLowerCase() === keys.next ? 1 : -1;
-
     scrollToIndex(currentItem.index + direction, {
       align: "start",
       behavior: "smooth",
@@ -85,8 +72,19 @@ export function useKeyboardNavigation({
     }, 250);
   }
 
-  useKeypress({
-    combo: [keys.previous, keys.next],
-    callback: handleChangeIndex,
-  });
+  // NOTE: no preventDefault, so the page keeps its own keys; typing in a text field is skipped by the library
+  // NOTE: a list with the navigation off registers nothing, so two lists never register the same key
+  useHotkeys(
+    enabled
+      ? [
+          { hotkey: keys.previous, callback: () => handleChangeIndex(-1) },
+          { hotkey: keys.next, callback: () => handleChangeIndex(1) },
+        ]
+      : [],
+    {
+      preventDefault: false,
+      stopPropagation: false,
+      conflictBehavior: "allow",
+    },
+  );
 }

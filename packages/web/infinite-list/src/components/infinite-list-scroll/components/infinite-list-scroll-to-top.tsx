@@ -1,9 +1,9 @@
 import { type ReactNode, useEffect, useState } from "react";
 
-import { useInfiniteListScrollContext } from "../../context";
+import { useInfiniteListScrollContext } from "../hooks/use-infinite-list-scroll-context";
 
 interface InfiniteListScrollToTopProps {
-  /** How far (px) the container must be scrolled for the button to show up. @default 300 */
+  /** How far (px) the container must be scrolled for the button to show up. @defaultValue 300 */
   threshold?: number;
   /** Renders your own button. Call `scrollToTop` from its click handler. */
   children?: (actions: { scrollToTop: () => void }) => ReactNode;
@@ -49,7 +49,7 @@ export function InfiniteListScrollToTop({
       type="button"
       aria-label="Voltar ao topo"
       onClick={scrollToTop}
-      className="fixed right-10 bottom-5 z-50 flex size-10 cursor-pointer items-center justify-center rounded-md border bg-primary text-primary-foreground"
+      className="bg-primary text-primary-foreground fixed right-10 bottom-5 z-50 flex size-10 cursor-pointer items-center justify-center rounded-md border"
     >
       ↑
     </button>

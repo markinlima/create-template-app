@@ -1,12 +1,12 @@
 import { type HTMLAttributes, type ReactNode, useRef, useState } from "react";
 import { cn } from "tailwind-variants";
 
-import { useElementSize } from "@web/shared/hooks/use-element-size";
+import { useElementSize } from "@web/shared/hooks";
 
 import {
   InfiniteListScrollContext,
   type InfiniteListScrollContextProps,
-} from "../../context";
+} from "../context/infinite-list-scroll-context";
 
 interface InfiniteListScrollRootProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;

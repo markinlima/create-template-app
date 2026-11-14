@@ -1,20 +1,17 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { ReactNode } from "react";
 
-import { useInfiniteListScrollContext } from "../../context";
-import {
-  type KeyboardNavigationKeys,
-  useKeyboardNavigation,
-} from "../../hooks/use-keyboard-navigation";
-import { RenderSlot } from "../../render-slot";
-import type { InfiniteListData, InfiniteListSlots } from "../../types";
-import {
-  DefaultEmpty,
-  DefaultFooter,
-  DefaultInitialLoader,
-  DefaultNextPageError,
-} from "../defaults";
-import { InfiniteListLoader } from "../infinite-list-loader/infinite-list-loader";
+import { useKeyboardNavigation } from "../../../hooks/keyboard/use-keyboard-navigation";
+import type { InfiniteListData } from "../../../types/infinite-list-data";
+import type { InfiniteListSlots } from "../../../types/infinite-list-slots";
+import type { KeyboardNavigationKeys } from "../../../types/keyboard-navigation-keys";
+import { useInfiniteListScrollContext } from "../../infinite-list-scroll/hooks/use-infinite-list-scroll-context";
+import { DefaultEmpty } from "../../internal/defaults/default-empty";
+import { DefaultFooter } from "../../internal/defaults/default-footer";
+import { DefaultInitialLoader } from "../../internal/defaults/default-initial-loader";
+import { DefaultNextPageError } from "../../internal/defaults/default-next-page-error";
+import { InfiniteListLoader } from "../../internal/infinite-list-loader";
+import { RenderSlot } from "../../internal/render-slot";
 
 export interface VirtualInfiniteListProps<T>
   extends InfiniteListData<T>,
@@ -24,20 +21,20 @@ export interface VirtualInfiniteListProps<T>
    * real height when `enableElementMeasurement` is off.
    */
   estimatedItemHeight: (index: number) => number;
-  /** Items rendered beyond the visible area. @default 4 */
+  /** Items rendered beyond the visible area. @defaultValue 4 */
   overscan?: number;
-  /** Space (px) between items. @default 0 */
+  /** Space (px) between items. @defaultValue 0 */
   gap?: number;
-  /** Space (px) before the first item. @default 0 */
+  /** Space (px) before the first item. @defaultValue 0 */
   paddingTop?: number;
   /**
    * Measures the real height of each item with a `ResizeObserver`. For items of variable height.
-   * The end row (loader, footer, empty state) is always measured, whatever this is. @default false
+   * The end row (loader, footer, empty state) is always measured, whatever this is. @defaultValue false
    */
   enableElementMeasurement?: boolean;
-  /** Scrolls item by item with the keyboard. @default false */
+  /** Scrolls item by item with the keyboard. @defaultValue false */
   enableKeyboardNavigation?: boolean;
-  /** Keys of the keyboard navigation. @default { previous: "w", next: "s" } */
+  /** Keys of the keyboard navigation. @defaultValue { previous: "W", next: "S" } */
   keyboardNavigationKeys?: KeyboardNavigationKeys;
   /** Scroll offset (px) to start at, e.g. restored by the router. */
   initialScrollOffset?: number;
@@ -78,7 +75,8 @@ export function VirtualInfiniteListRoot<T>({
     isNextPageAvailable && isNextPageError && !isFetchingNextPage;
 
   const virtualizer = useVirtualizer({
-    count: items.length + 1, // ? +1 row for the end of the list: next page loader, footer or empty state
+    // NOTE: +1 row for the end of the list (loader, footer or empty state)
+    count: items.length + 1,
     getScrollElement: () => scrollElement,
     estimateSize: estimatedItemHeight,
     scrollMargin: headerHeight,
@@ -127,8 +125,7 @@ export function VirtualInfiniteListRoot<T>({
       {virtualizer.getVirtualItems().map((virtualItem) => {
         const isEndRow = virtualItem.index >= items.length;
         const item = items[virtualItem.index];
-        // ? The end row (loader, footer or empty state) changes with the state of the list, so a fixed
-        // ? height can't fit all of them. It is always measured; the items only when asked to.
+        // NOTE: the end row changes with the list state, so a fixed height can't fit it; it is always measured
         const shouldMeasure = enableElementMeasurement || isEndRow;
 
         return (
@@ -163,9 +160,9 @@ export function VirtualInfiniteListRoot<T>({
                 disabled={isFetchingNextPage}
                 loadedCount={items.length}
               >
-                {renderNextPageLoader ? (
+                {!!renderNextPageLoader && (
                   <RenderSlot render={renderNextPageLoader} props={undefined} />
-                ) : null}
+                )}
               </InfiniteListLoader>
             )}
             {isEndRow && !isNextPageAvailable && items.length > 0 && (

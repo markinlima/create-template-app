@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "tailwind-variants";
 
-import { useInfiniteListScrollContext } from "../../context";
+import { useInfiniteListScrollContext } from "../hooks/use-infinite-list-scroll-context";
 
 interface InfiniteListScrollHeaderProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode;
