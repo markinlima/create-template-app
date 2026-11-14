@@ -9,7 +9,7 @@ tmp
 # output
 out
 dist
-build
+/build
 *.tgz
 
 # code coverage
